@@ -1,6 +1,6 @@
 // Bump this version every time you change index.html so phones pick up the update.
-const VERSION = 'v1';
-const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
+const VERSION = 'v2';
+const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './profile-photo.jpg'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)));
   self.skipWaiting();

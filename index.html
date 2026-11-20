@@ -8,12 +8,12 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>myCampus – Northwind University</title>
+<title>myCampus – Bennett University</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700&family=Lato:wght@400;700&family=Lexend:wght@400;600&family=Atkinson+Hyperlegible:wght@400;700&family=Tajawal:wght@400;700&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block">
 <style>
 :root{
-  --accent:#8d1b3d; --accent-d:#6e1430; --bg:#fde6ea; --bg2:#fbd9df; --chip:#f8cfd7;
+  --accent:#8d1b3d; --accent-d:#6e1430; --bg:#fff0f2; --bg2:#fce2e7; --chip:#f8d4dc;
   --blue:#1e88e5; --text:#1d1d1f; --muted:#666; --line:#ececec; --ok:#2e7d32; --okbg:#e3f4e4;
   --bad:#d32f2f; --badbg:#fde3e3; --font:'Mulish',sans-serif; --fs:1; --lh:1.35; --ls:0px;
 }
@@ -53,11 +53,11 @@ button{cursor:pointer;border:none;background:none}
 /* ---------- APP SHELL ---------- */
 #app{flex:1;display:flex;flex-direction:column;min-height:0;background:var(--bg)}
 .hdr{height:52px;background:#fff;display:flex;align-items:center;padding:0 10px;gap:10px;position:relative;z-index:5;border-bottom:1px solid #f1f1f1}
-.hdr .title{flex:1;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr .title{flex:1;font-size:17px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#172d49}
 .hdr .ms{font-size:26px;color:#333;cursor:pointer}
 .parent-pill{position:absolute;left:50%;top:6px;transform:translateX(-8%);background:var(--blue);color:#fff;border-radius:0 0 14px 14px;padding:5px 14px;font-size:15px;z-index:6;box-shadow:0 2px 6px rgba(0,0,0,.15)}
-.pstrip{background:#fff;display:flex;gap:12px;align-items:center;padding:8px 10px 10px;border-bottom:1px solid #f0f0f0}
-.av{width:44px;height:44px;border-radius:50%;overflow:hidden;flex:none;background:#e8e2dc}
+.pstrip{background:#fff;display:flex;gap:12px;align-items:center;padding:10px 10px 12px;border-bottom:1px solid #f0f0f0}
+.av{width:44px;height:44px;border-radius:50%;overflow:hidden;flex:none;background:#e8e2dc}.av img{width:100%;height:100%;object-fit:cover;object-position:center 28%;display:block}
 .pstrip .n{font-size:15px;text-transform:uppercase}
 .pstrip .s{font-size:13px;color:#444}
 #content{flex:1;overflow:auto;position:relative}
@@ -120,7 +120,7 @@ button{cursor:pointer;border:none;background:none}
 .formrow{margin-bottom:12px}.formrow label{display:block;font-size:13px;margin-bottom:4px;color:#333}
 .formrow .inp{padding:9px 10px}
 /* profile */
-.prof-photo{width:96px;height:124px;border:2px solid var(--accent);border-radius:6px;overflow:hidden;margin:10px;background:#e8e2dc}
+.prof-photo{width:84px;height:110px;border:2px solid var(--accent);border-radius:12px;overflow:hidden;margin:10px;background:#e8e2dc}.prof-photo img{width:100%;height:100%;object-fit:cover;display:block}
 .prof-name{font-size:21px;padding:0 10px 8px}
 .pl{display:grid;grid-template-columns:42% 12px 1fr;padding:5px 10px;font-size:14px}
 /* institution */
@@ -215,12 +215,12 @@ body.rtl #phone{direction:rtl}
   <!-- LOGIN -->
   <div id="login">
     <div class="lg-top"><span class="mc-logo">
-      <svg viewBox="0 0 40 40"><rect x="3" y="3" width="34" height="34" rx="9" fill="#2a9df4"/><path d="M11 27V14l5 7 5-7v13M24 20.5a5 5 0 0 1 8-2.5M32 25a5 5 0 0 1-8-2.5" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      myCampus</span></div>
+      <svg viewBox="0 0 52 42" aria-hidden="true"><path d="M3 4h27v34H3z" fill="none" stroke="#159bd0" stroke-width="3"/><path d="M8 24l6-7 5 6 7-8" fill="none" stroke="#159bd0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M31 10h16v22H31" fill="none" stroke="#159bd0" stroke-width="3" stroke-linecap="square"/><path d="M35 16h10M35 22h10M35 28h7" stroke="#159bd0" stroke-width="2"/></svg>
+      myCamu</span></div>
     <div class="lg-body">
       <div class="uni-logo" id="uniLogoBig"></div>
-      <div class="lg-uni">Northwind University</div>
-      <div class="lg-center"><button class="link" onclick="openUniPicker()">Not from Northwind University?</button></div>
+      <div class="lg-uni">Bennett University</div>
+      <div class="lg-center"><button class="link" onclick="openUniPicker()">Not from Bennett University?</button></div>
       <form onsubmit="return doLogin(event)">
         <div class="fld"><label>Username</label><input class="inp" id="lgUser" autocomplete="off" placeholder=""></div>
         <div class="fld"><label>Password <button type="button" class="link" onclick="forgotPw()">Forgot Password?</button></label>
@@ -239,7 +239,7 @@ body.rtl #phone{direction:rtl}
   <div id="app" class="hidden">
     <div class="hdr">
       <span class="ms" onclick="openDrawer()">menu</span>
-      <div class="title">Northwind University</div>
+      <div class="title">Bennett University</div>
       <button class="parent-pill" onclick="parentLogin()">Parent Login</button>
       <span class="ms fill" onclick="go('profile')">account_circle</span>
       <span class="ms" onclick="confirmLogout()">logout</span>
@@ -259,11 +259,11 @@ body.rtl #phone{direction:rtl}
 
 <script>
 /* ================= DATA ================= */
-const UNI='Northwind University';
+const UNI='Bennett University';
 const ST={name:'ILARIKA GAUTAM',status:'Active',adm:'5591',admYear:'2025-2026',roll:'S25CSEU0122',degree:'Undergraduate',
  dept:'School of Computer Science Engineering & Technology',sem:'Semester - 3',course:'Bachelor of Technology (Computer Science and Engineering)',
  college:UNI,plan:'B.Tech CSE DevOps 2025-26',validity:'30-06-2029',first:'ILARIKA',last:'GAUTAM',dob:'01-01-2007',gender:'Female',
- father:'PARENT NAME 1',mother:'PARENT NAME 2',address:'123, DEMO STREET, SAMPLE NAGAR, New Delhi, IN',city:'New Delhi',state:'Delhi',email:'student@northwind.edu',phone:'+91 98XXXXXX10'};
+ father:'PARENT NAME 1',mother:'PARENT NAME 2',address:'123, DEMO STREET, SAMPLE NAGAR, New Delhi, IN',city:'New Delhi',state:'Delhi',email:'',phone:'+91 98XXXXXX10'};
 const SEMSEL='2026-2027, Semester - 3, B.Tech.(CSE)';
 const SUBJ=[
  {code:'2025CSET200',name:'Probability and Statistics',pct:66},
@@ -352,8 +352,8 @@ const TODAY=new Date();TODAY.setHours(0,0,0,0);
 function ago(d){const days=Math.round((d-TODAY)/864e5);const a=Math.abs(days);
  let s=a===0?'today':a<30?`${a} day${a>1?'s':''}`:a<365?`${Math.round(a/30)} month${Math.round(a/30)>1?'s':''}`:`${Math.round(a/365)} year${Math.round(a/365)>1?'s':''}`;
  return days===0?'Today':days<0?s+' ago':'in '+s;}
-const AVATAR=`<svg viewBox="0 0 100 130" width="100%" height="100%" preserveAspectRatio="xMidYMid slice"><rect width="100" height="130" fill="#ece6df"/><path d="M50 22c-16 0-26 12-26 30 0 10 2 20-4 30 8 2 14-2 18-6l24 0c4 4 10 8 18 6-6-10-4-20-4-30 0-18-10-30-26-30z" fill="#2c2420"/><ellipse cx="50" cy="54" rx="15" ry="18" fill="#d9a888"/><path d="M14 130c2-26 16-38 36-38s34 12 36 38z" fill="#2e2e33"/><path d="M42 92l8 14 8-14z" fill="#fff"/></svg>`;
-function uniLogo(w){return `<svg width="${w}" viewBox="0 0 150 44"><path d="M4 4h30v16c0 12-8 18-15 21C12 38 4 32 4 20z" fill="#1d4e89"/><path d="M8 8h22v12c0 8-5 13-11 16-6-3-11-8-11-16z" fill="#f0b429"/><path d="M19 12l2.5 5 5.5.8-4 3.9 1 5.5-5-2.6-5 2.6 1-5.5-4-3.9 5.5-.8z" fill="#1d4e89"/><text x="40" y="20" font-family="Georgia,serif" font-weight="700" font-size="14" fill="#1d4e89" letter-spacing="1">NORTHWIND</text><text x="40" y="33" font-family="Georgia,serif" font-size="9.5" fill="#1d4e89" letter-spacing="2.4">UNIVERSITY</text></svg>`;}
+const AVATAR=`<img src="profile-photo.jpg" alt="Student profile" loading="eager">`;
+function uniLogo(w){return `<svg width="${w}" viewBox="0 0 220 54" role="img" aria-label="Bennett University"><text x="110" y="25" text-anchor="middle" font-family="Arial,sans-serif" font-weight="600" font-size="21" fill="#102c50">BENNETT</text><text x="110" y="43" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" letter-spacing="3" fill="#102c50">UNIVERSITY</text></svg>`;}
 function toast(msg,ok){const t=document.createElement('div');t.className='toast'+(ok?' ok':'');t.innerHTML=`<span class="ms">${ok?'check_circle':'error'}</span><div>${msg}</div><span class="ms x">close</span>`;t.querySelector('.x').onclick=()=>t.remove();$('#toasts').appendChild(t);setTimeout(()=>t.remove(),4000);}
 function closeOv(){$('#overlay').innerHTML='';}
 function ov(html,dismiss=true){$('#overlay').innerHTML=`<div class="scrim" ${dismiss?'onclick="closeOv()"':''}></div>`+html;}
@@ -371,7 +371,7 @@ function confirmLogout(){modal('Logout',`<p>Are you sure you want to logout?</p>
 function logout(){closeOv();$('#app').classList.add('hidden');$('#login').classList.remove('hidden');}
 function parentLogin(){modal('Parent Login',`<p style="font-size:13px;color:#555;margin-bottom:12px">Login as a parent/guardian to view your ward's details.</p><div class="formrow"><label>Parent Username</label><input class="inp"></div><div class="formrow"><label>Password</label><input class="inp" type="password"></div><button class="btn-blue" style="margin-top:8px" onclick="closeOv();toast('Switched to parent view (demo)',1)">Login</button>`);}
 function openUniPicker(){const host=$('#app').classList.contains('hidden')?'#phone':'#phone';
- ov(`<div class="modal"><div class="mh">Select your institution<span class="ms" style="cursor:pointer" onclick="closeOv()">close</span></div><div class="mb"><div class="search" style="margin:0 0 8px"><span class="ms">search</span><input placeholder="Search institution"></div>${['Northwind University','Southfield Institute of Technology','Eastbrook College','Westlake University'].map(u=>`<div class="opt" onclick="closeOv()">${u}</div>`).join('')}</div></div>`);}
+ ov(`<div class="modal"><div class="mh">Select your institution<span class="ms" style="cursor:pointer" onclick="closeOv()">close</span></div><div class="mb"><div class="search" style="margin:0 0 8px"><span class="ms">search</span><input placeholder="Search institution"></div>${['Bennett University','Southfield Institute of Technology','Eastbrook College','Westlake University'].map(u=>`<div class="opt" onclick="closeOv()">${u}</div>`).join('')}</div></div>`);}
 function forgotPw(){modal('Forgot Password',`<p style="font-size:13px;color:#555;margin-bottom:12px">Enter your registered email. We'll send a reset link.</p><div class="formrow"><label>Email</label><input class="inp"></div><button class="btn-blue" onclick="closeOv();toast('If the account exists, a reset link has been sent (demo).',1)">Send reset link</button>`);}
 function createAcc(){modal('Create an account',`<div class="formrow"><label>Full name</label><input class="inp"></div><div class="formrow"><label>Email</label><input class="inp"></div><div class="formrow"><label>Mobile</label><input class="inp"></div><button class="btn-blue" onclick="closeOv();toast('Account request submitted (demo).',1)">Sign up</button>`);}
 function termsModal(){modal('Terms of Use',`<p style="font-size:13px;line-height:1.6">This is a demo replica of a student portal for a fictional institution. No data is sent anywhere; everything runs in your browser.</p>`);}
@@ -389,7 +389,7 @@ const pt=(t,sub)=>`<div class="ptitle">${t}</div>${sub?`<div class="psub">${sub}
 
 /* ---------- Drawer ---------- */
 let enrollOpen=false;
-function openDrawer(){ov(`<div class="drawer"><div class="dh"><span class="ms" style="cursor:pointer" onclick="closeOv()">close</span>Northwind University</div><div class="ds"><input placeholder="Search" oninput="filterMenu(this.value)"></div><ul id="menuList"></ul></div>`);filterMenu('');}
+function openDrawer(){ov(`<div class="drawer"><div class="dh"><span class="ms" style="cursor:pointer" onclick="closeOv()">close</span>Bennett University</div><div class="ds"><input placeholder="Search" oninput="filterMenu(this.value)"></div><ul id="menuList"></ul></div>`);filterMenu('');}
 function filterMenu(q){q=q.toLowerCase();let h='';
  MENU.forEach(([id,ic,lbl])=>{const subs=id==='enrollment'?[['preenlist','bookmarks','Pre enlistment'],['curriculum','bookmark','Curriculum']]:[];
   const match=lbl.toLowerCase().includes(q)||subs.some(s=>s[2].toLowerCase().includes(q));if(!match)return;
