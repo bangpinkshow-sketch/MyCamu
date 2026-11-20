@@ -51,7 +51,7 @@ button{cursor:pointer;border:none;background:none}
 .err{color:var(--bad);font-size:12px;margin-top:6px}
 
 /* ---------- APP SHELL ---------- */
-#app{flex:1;display:flex;flex-direction:column;min-height:0;background:var(--bg)}
+#app{flex:1;display:flex;flex-direction:column;min-height:0;background:var(--bg);border:5px solid #0d9ae1;border-top-width:4px}
 .hdr{height:52px;background:#fff;display:flex;align-items:center;padding:0 10px;gap:10px;position:relative;z-index:5;border-bottom:1px solid #f1f1f1}
 .hdr .title{flex:1;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hdr .ms{font-size:26px;color:#333;cursor:pointer}
@@ -266,19 +266,25 @@ const ST={name:'ILARIKA GAUTAM',status:'Active',adm:'5591',admYear:'2025-2026',r
  father:'PARENT NAME 1',mother:'PARENT NAME 2',address:'123, DEMO STREET, SAMPLE NAGAR, New Delhi, IN',city:'New Delhi',state:'Delhi',email:'student@northwind.edu',phone:'+91 98XXXXXX10'};
 const SEMSEL='2026-2027, Semester - 3, B.Tech.(CSE)';
 const SUBJ=[
- {code:'2025CSET200',name:'Probability and Statistics',pct:66},
- {code:'2025CSET201',name:'Data Structures using C++',pct:51},
- {code:'2025CSET205',name:'Database Management Systems',pct:43},
- {code:'CSET203',name:'Microprocessors and Computer Architecture',pct:68},
- {code:'CSET217',name:'Software Development with DevOps',pct:100}];
-function mkLog(i){
- const base=[['05-Nov-2026','15:55 - 16:55','Absent (On Duty Submitted)'],['04-Nov-2026','14:50 - 15:50','Present'],['02-Nov-2026','13:45 - 14:45','Present'],['02-Nov-2026','12:40 - 13:40','Present'],
- ['29-Oct-2026','15:55 - 16:55','Absent'],['28-Oct-2026','14:50 - 15:50','Absent'],['22-Oct-2026','15:55 - 16:55','Present'],['15-Oct-2026','15:55 - 16:55','Absent'],['08-Oct-2026','14:50 - 15:50','Present']];
- if(i===4) return base.map(b=>[b[0],b[1],'Present']);
- return base.filter((b,k)=>(k+i)%5!==3);
-}
+ {code:'2025CSET200',name:'Probability and Statistics',k:'ps',slots:[[1,'12:40 - 13:40'],[1,'13:45 - 14:45'],[3,'14:50 - 15:50'],[4,'15:55 - 16:55']],abs:.38},
+ {code:'2025CSET201',name:'Data Structures using C++',k:'ds',slots:[[1,'09:25 - 10:25'],[3,'08:20 - 09:20'],[3,'09:25 - 10:25'],[3,'11:35 - 12:35'],[4,'14:50 - 15:50']],abs:.6},
+ {code:'2025CSET205',name:'Database Management Systems',k:'dbms',slots:[[4,'08:20 - 09:20'],[4,'09:25 - 10:25'],[4,'13:45 - 14:45'],[5,'09:25 - 10:25']],abs:.72},
+ {code:'CSET203',name:'Microprocessors and Computer Architecture',k:'mp',slots:[[1,'15:55 - 16:55'],[1,'17:00 - 18:00'],[2,'14:50 - 15:50'],[4,'10:30 - 11:30']],abs:.4},
+ {code:'CSET217',name:'Software Development with DevOps',k:'dev',slots:[[2,'13:45 - 14:45'],[3,'13:45 - 14:45'],[5,'13:45 - 14:45'],[5,'14:50 - 15:50'],[5,'15:55 - 16:55']],abs:0}];
+const OD_WIN=[['2026-08-19','2026-08-20'],['2026-09-03','2026-09-03'],['2026-09-07','2026-09-07'],['2026-10-01','2026-10-01'],['2026-10-05','2026-10-05'],['2026-10-31','2026-10-31'],['2026-11-05','2026-11-13'],['2026-11-14','2026-11-14'],['2026-11-20','2026-11-23']];
+const _LOGS={};
+function mkLog(i){if(_LOGS[i])return _LOGS[i];const s=SUBJ[i];const out=[];
+ const hash=(str)=>{let h=2166136261;for(const c of str){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return ((h>>>0)%1000)/1000;};
+ const inOD=d=>OD_WIN.some(([a,b])=>d>=new Date(a+'T00:00')&&d<=new Date(b+'T00:00'));
+ const isHol=d=>HOLS.some(h=>{const a=new Date(h[1]+'T00:00'),b=h[2]?new Date(h[2]+'T00:00'):a;return d>=a&&d<=b;});
+ for(let d=new Date(2026,7,17);d<=TODAY;d.setDate(d.getDate()+1)){
+  if(isHol(d))continue;
+  s.slots.forEach(([wd,t])=>{if(d.getDay()!==wd)return;const r=hash(s.code+fmt(d)+t);
+   let st=r<s.abs?'Absent':'Present';if(inOD(d))st+=' (On Duty Submitted)';out.push([fmt(d),t,st]);});}
+ return _LOGS[i]=out.reverse();}
+function attPct(i){const l=mkLog(i);if(!l.length)return 0;return Math.round(l.filter(r=>r[2].startsWith('Present')||r[2].includes('On Duty')).length/l.length*100);}
 const MSGS=[{from:'Udit Mangal',date:'06-Jul-2026, 06:28 PM',title:'Odd Semester Registration Guidelines',
- body:`Dear Student,<br>Greetings from ${UNI}!<br>This is to inform you that online registration of returning students for the Odd Semester AY 2026-27 shall be open as per the schedule below:<br>o&nbsp; 2nd Year: 4th August 2026<br>o&nbsp; 3rd Year: 5th August 2026<br>o&nbsp; 4th Year: 6th August 2026<br>Students are requested to complete fee payment before registration. Registration will be done through the student portal using your login credentials. For any queries, contact the Registrar Office.<br><br>Regards,<br>Office of the Registrar`}];
+ body:`Dear Student,<br>Greetings from ${UNI}!<br>This is to inform you that online registration of returning students for the Odd Semester AY 2026-27 shall be open as per the schedule below:<br>o&nbsp;&nbsp;&nbsp; 2nd Year: 4th August 2026<br>o&nbsp;&nbsp;&nbsp; 3rd Year: 5th August 2026<br>o&nbsp;&nbsp;&nbsp; 4th Year: 6th August 2026<br>o&nbsp;&nbsp;&nbsp; 5th Year: 7th August 2026<br>Commencement of Classes:<br>Classes for the ODD SEMESTER will commence for all returning students from Monday, 10th August 2026.<br>You are advised to carefully go through the attached guidelines for online registration, fee payments, Refund Policy, and other important instructions.<br><br>Guidelines: <a class="link" style="word-break:break-all" href="#">https://northwind-my.sharepoint.com/:f:/g/personal/registry_northwind_edu/Odd-Sem-Registration-Guidelines-2026-27</a><br><br>Regards,<br>Registrar Office`}];
 const HOLS=[['EID','2026-08-26'],['Janmashtami','2026-09-04'],['Gandhi Jayanti','2026-10-02'],['Vijaya Dashami','2026-10-20'],['Diwali Holidays','2026-11-06','2026-11-11'],['Guru Nanak Jayanti','2026-11-24'],['Christmas','2026-12-25']];
 const EXAMS=[
  ['Microprocessors and Computer Architecture - CSET203','Mid-Semester Exam-1','Mid-Semester Exam-1'],
@@ -292,53 +298,86 @@ const EXAMS=[
  ['Probability and Statistics - 2025CSET200-R25','Mid-Semester Exam-1','Mid-Semester Exam-1'],
  ['Data Structures using C++ - 2025CSET201','IA Theory-1','IA Theory-1'],
  ['Database Management Systems - 2025CSET205','Mid-Semester Exam-1','Mid-Semester Exam-1']];
-const MEALS=[
- ['Breakfast','08:00 AM - 09:45 AM',['Breakfast(Tue)-','Aloo pyaaz paratha','Curd','Sweet lime','Sprouts','Jam- (276 Kcal),Brown- (282 Kcal) & White Bread- (302 Kcal)','Milk- (59 Kcal)/Tea- (30 Kcal)/Coffee- (30 Kcal)']],
+const MEALS_TUE=[
+ ['Breakfast','08:00 AM - 09:45 AM',['Breakfast(Tue)-','Aloo pyaaz paratha','Curd','Sweet lime','Sprouts','Jam- (276 Kcal),Brown- (282 Kcal) & White Bread- (302 Kcal)','"Milk- (59 Kcal)/Tea- (30 Kcal)/Coffee- (30 Kcal)"']],
  ['Lunch','12:00 PM - 02:30 PM',['Lunch(Tue)-Lauki Chana-(214 Kcal)','Aloo Tomatar Rassa- (101 Kcal)','Dal Makhani- (278 Kcal)','Steamed Rice- (129 Kcal)','Roti- (280 Kcal)','Onion Cucumber - ( 60 Kcal)','Masala Chaas (65 Kcal)','Sambhar']],
- ['Snack','05:00 PM - 06:00 PM',['Snack(Tue)-Paani Poori','Sweet Chutney','Coffee- (30 Kcal)','Rooh Afza']],
+ ['Snack','5:00 PM - 06:00 PM',['Snack(Tue)-Paani Poori','Sweet Chutney','Coffee- (30 Kcal)','Rooh Afza']],
  ['Dinner','08:00 PM - 09:30 PM',['Dinner(Tue)-Kundru Aloo- (146Kcal)','Long Beans Dry-(78 Kcal)','Kala Chaana - (278 Kcal)','Dal Tadka- (190 Kcal)','Jeera Rice- (150 Kcal)','Roti- (280 Kcal)','Gulab Jamun']]];
+const MEALS_FRI=[
+ ['Breakfast','07:30 AM - 09:30 AM',['Breakfast(Fri)-Veg Upma','Tomato Peanut Chutney','Mix Fruit','Sweet Milk Oats','Jam- (276 Kcal), Brown- (282 Kcal) & White Bread- (302 Kcal)','"Milk- (59 Kcal)/Tea- (30 Kcal)/Coffee- (30 Kcal)"']],
+ ['Lunch','12:00 PM - 03:00 PM',['Lunch(Fri)-Navratan Korma','Kashmiri Dum Aloo','Rajma Masala','jeera Rice','Roti','Carrot Cucumber Salad','Curd','Sambar']],
+ ['Snack','5:00 PM - 06:00 PM',['Snack(Fri)-Cheese Corn Sandwich','Tomato Ketchup','','Coffee','Orange Tang']],
+ ['Dinner','08:00 PM - 10:00 PM',['Dinner(Fri)-Beetroot Chana','Egg Curry','LMD Dal','Steamed Rice','Roti','Gulab-Jamun','Onion Cucumber','Tomato Shorba']]];
+function mealsFor(d){const ab=DAY[d.getDay()].slice(0,3);const base=d.getDay()===2||d.getDay()===1||d.getDay()===3?MEALS_TUE:MEALS_FRI;
+ return base.map(([n,t,items])=>[n,t,items.map(x=>x.replace(/\((Tue|Fri)\)/,'('+ab+')'))]);}
+const MEALS=MEALS_FRI;
 const C={dbms:['Database Management Systems','2025CSET205'],mp:['Microprocessors and Computer Architecture','CSET203'],ds:['Data Structures using C++','2025CSET201'],ps:['Probability and Statistics','2025CSET200'],dev:['Software Development with DevOps','CSET217'],er:['Engineering Reports & Research Publishing','2025CSET202']};
-const TT={ // weekday -> classes  [course,room,time,teacher,type]
- 1:[['ps','P-CB-004','09:25 AM - 10:25 AM (60 min)','Shwetang Dubey','Lecture'],['dev','127-N-CA','10:30 AM - 11:30 AM (60 min)','Utkarsh Agarwal','Lecture'],['er','P-LH-102','01:45 PM - 02:45 PM (60 min)','Neha Sharma','Lecture'],['ds','P-CB-005','02:50 PM - 03:50 PM (60 min)','Tinku Singh','Lecture']],
+const TT={ // weekday -> [course,room,time,teacher,type]
+ 1:[['ds','P-CB-205','09:25 AM - 10:25 AM (60 min)','Tinku Singh','Lecture'],['ps','P-LA-013','12:40 PM - 01:40 PM (60 min)','ROHIT  KUMAR','Practical'],['ps','P-LA-013','01:45 PM - 02:45 PM (60 min)','ROHIT  KUMAR','Practical'],['mp','B-LA-201','03:55 PM - 04:55 PM (60 min)','Ashish Kumar','Practical'],['mp','B-LA-201','05:00 PM - 06:00 PM (60 min)','Ashish Kumar','Practical']],
  2:[['dev','127-N-CA','01:45 PM - 02:45 PM (60 min)','Utkarsh Agarwal','Lecture'],['mp','P-LH-101','02:50 PM - 03:50 PM (60 min)','Ashutosh Srivastava','Lecture']],
- 3:[['ds','P-LA-201','08:20 AM - 09:20 AM (60 min)','Lahar Srivastava','Practical'],['ds','P-LA-201','09:25 AM - 10:25 AM (60 min)','Lahar Srivastava','Practical'],['ps','P-CB-004','12:40 PM - 01:40 PM (60 min)','Shwetang Dubey','Lecture'],['mp','P-LH-101','02:50 PM - 03:50 PM (60 min)','Ashutosh Srivastava','Lecture']],
- 4:[['dbms','P-LA-202','08:20 AM - 09:20 AM (60 min)','Ankur Maurya','Practical'],['dbms','P-LA-202','09:25 AM - 10:25 AM (60 min)','Ankur Maurya','Practical'],['mp','P-LH-101','10:30 AM - 11:30 AM (60 min)','Ashutosh Srivastava','Lecture'],['dbms','P-CC-018','01:45 PM - 02:45 PM (60 min)','Ankur Maurya','Lecture'],['ds','P-CB-005','02:50 PM - 03:50 PM (60 min)','Tinku Singh','Practical'],['ps','P-CB-004','03:55 PM - 04:55 PM (60 min)','Shwetang Dubey','Lecture']],
- 5:[['dev','127-N-LAB','08:20 AM - 10:25 AM (120 min)','Utkarsh Agarwal','Practical'],['dbms','P-CC-018','10:30 AM - 11:30 AM (60 min)','Ankur Maurya','Lecture'],['ps','P-CB-004','12:40 PM - 01:40 PM (60 min)','Shwetang Dubey','Tutorial']]};
-let LEAVES=[
- {type:'Leave Out Pass',from:'05-Nov-2026, 11:00 AM',to:'13-Nov-2026, 06:59 PM',reason:'Home visit',status:'Approved',att:'IMG-20261103-WA0000.jpg'},
- {type:'On Duty',from:'05-Nov-2026, 09:00 AM',to:'13-Nov-2026, 06:00 PM',reason:'Home visit',status:'Submitted',att:''},
- {type:'Day Out Pass',from:'31-Oct-2026, 10:00 AM',to:'31-Oct-2026, 08:00 PM',reason:'Shopping',status:'Approved',att:''}];
+ 3:[['ds','P-LA-201','08:20 AM - 09:20 AM (60 min)','Lahar Srivatstava','Practical'],['ds','P-LA-201','09:25 AM - 10:25 AM (60 min)','Lahar Srivatstava','Practical'],['ds','P-CC-210','11:35 AM - 12:35 PM (60 min)','Tinku Singh','Lecture'],['dev','B-TR-308','01:45 PM - 02:45 PM (60 min)','Utkarsh Agarwal','Lecture'],['ps','P-CB-304','02:50 PM - 03:50 PM (60 min)','Shwetang Dubey','Lecture']],
+ 4:[['dbms','P-LA-202','08:20 AM - 09:20 AM (60 min)','Ankur Maurya','Practical'],['dbms','P-LA-202','09:25 AM - 10:25 AM (60 min)','Ankur Maurya','Practical'],['mp','P-LH-101','10:30 AM - 11:30 AM (60 min)','Ashutosh Srivastava','Lecture'],['dbms','P-CC-018','01:45 PM - 02:45 PM (60 min)','Ankur Maurya','Lecture'],['ds','P-CB-005','02:50 PM - 03:50 PM (60 min)','Tinku Singh','Lecture'],['ps','P-CB-004','03:55 PM - 04:55 PM (60 min)','Shwetang Dubey','Lecture']],
+ 5:[['dbms','P-CC-015','09:25 AM - 10:25 AM (60 min)','Ankur Maurya','Lecture'],['dev','P-CA-209','01:45 PM - 02:45 PM (60 min)','Utkarsh Agarwal','Lecture'],['dev','214-N-LA','02:50 PM - 03:50 PM (60 min)','Utkarsh Agarwal','Practical'],['dev','214-N-LA','03:55 PM - 04:55 PM (60 min)','Utkarsh Agarwal','Practical']]};
+const _L0=[
+ ['Leave Out Pass','20-Nov-2026, 04:00 PM','23-Nov-2026, 06:59 PM','Home Visit','Approved','IMG-20261120-WA0093.jpg','20-11-2026, 10:57 AM','20-11-2026, 01:11 PM','20-11-2026, 01:47 PM'],
+ ['On Duty','20-Nov-2026, 04:00 PM','23-Nov-2026, 06:59 PM','Home visit','Submitted'],
+ ['Day Out Pass','14-Nov-2026, 10:00 AM','14-Nov-2026, 08:00 PM','-','Completed'],
+ ['On Duty','14-Nov-2026, 10:00 AM','14-Nov-2026, 08:00 PM','-','Submitted'],
+ ['Day Out Pass','14-Nov-2026, 09:00 AM','14-Nov-2026, 07:00 PM','-','Completed'],
+ ['Leave Out Pass','05-Nov-2026, 11:00 AM','13-Nov-2026, 06:59 PM','Home visit','Completed','IMG-20261103-WA0000.jpg'],
+ ['On Duty','05-Nov-2026, 11:00 AM','13-Nov-2026, 06:59 PM','Home visit','Submitted'],
+ ['Day Out Pass','31-Oct-2026, 10:00 AM','31-Oct-2026, 08:00 PM','-','Cancelled'],
+ ['Day Out Pass','31-Oct-2026, 10:00 AM','31-Oct-2026, 08:00 PM','-','Completed'],
+ ['On Duty','31-Oct-2026, 10:00 AM','31-Oct-2026, 08:00 PM','-','Submitted'],
+ ['Day Out Pass','18-Oct-2026, 10:00 AM','18-Oct-2026, 09:00 PM','Moviee','Completed'],
+ ['On Duty','18-Oct-2026, 10:00 AM','18-Oct-2026, 09:00 PM','Moviee','Submitted']];
+const _LEND=[
+ ['On Duty','21-Nov-2025, 03:00 PM','24-Nov-2025, 06:00 PM','Home visit','Submitted'],
+ ['Leave Out Pass','17-Oct-2025, 03:00 PM','26-Oct-2025, 06:00 PM','home visit','Completed'],
+ ['On Duty','17-Oct-2025, 03:00 PM','25-Oct-2025, 06:00 PM','home visit','Cancelled'],
+ ['Leave Out Pass','04-Sep-2025, 04:00 PM','07-Sep-2025, 06:00 PM','Going home','Cancelled'],
+ ['Leave Out Pass','04-Sep-2025, 04:00 PM','07-Sep-2025, 06:00 PM','Home visit','Completed'],
+ ['Leave','04-Sep-2025, 09:00 AM','04-Sep-2025, 06:00 PM','Going home','Submitted']];
+function _genLeaves(){const out=[];const R=['Home visit','Going market','Going mall','Moviee','-','Home visit','Shopping','Going home'];
+ let d=new Date(2026,9,12);let k=0;
+ while(_L0.length+out.length+_LEND.length<96){
+  const kind=k%4;const r=R[k%R.length];
+  if(kind===0){const e=new Date(d);e.setDate(e.getDate()+3);out.push(['Leave Out Pass',fmt(d)+', 04:00 PM',fmt(e)+', 06:59 PM','Home visit',k%7===3?'Cancelled':'Completed']);out.push(['On Duty',fmt(d)+', 04:00 PM',fmt(e)+', 06:59 PM','Home visit',k%5===2?'Cancelled':'Submitted']);}
+  else out.push(['Day Out Pass',fmt(d)+', 10:00 AM',fmt(d)+', 08:00 PM',r,k%6===4?'Cancelled':'Completed']);
+  d.setDate(d.getDate()-(kind===0?6:4));if(d.getFullYear()===2026&&d.getMonth()===5)d=new Date(2026,3,30);k++;}
+ return out.slice(0,96-_L0.length-_LEND.length);}
+let LEAVES=[];function _mkLeaves(){return [..._L0,..._genLeaves(),..._LEND].map(a=>({type:a[0],from:a[1],to:a[2],reason:a[3],status:a[4],att:a[5]||'',t1:a[6],t2:a[7],t3:a[8]}));}
 const CUR=[
  ['CSET217 - Software Development with DevOps',4,'Specialization Core - I','Specialization Core- I (Major)','Enrolled','','','2026-2027','Semester - 3'],
  ['CSET203 - Microprocessors and Computer Architecture',4,'Core','Core-(Major)','Enrolled','','','2026-2027','Semester - 3'],
+ ['2025CSET205 - Database Management Systems',4,'Core','Core-(Major)','Enrolled','','','2026-2027','Semester - 3'],
+ ['2025CSET203 - Ethics for Engineers, Patents, Copyrights and IPR',1,'AEC-3','AEC-3-(Major)','Enrolled','','','2026-2027','Semester - 3'],
  ['2025CSET202 - Engineering Reports & Research Publishing',3,'SEC- 3','SEC- 3-(Major)','Enrolled','','','2026-2027','Semester - 3'],
- ['2025CSET200 - Probability and Statistics',4,'Core','Core-(Major)','Enrolled','','','2026-2027','Semester - 3'],
  ['2025CSET201 - Data Structures using C++',4,'Core','Core-(Major)','Enrolled','','','2026-2027','Semester - 3'],
- ['2025CSET205 - Database Management Systems',5,'Core','Core-(Major)','Enrolled','','','2026-2027','Semester - 3'],
+ ['2025CSET200 - Probability and Statistics',4,'MDC','MDC-(Major)','Enrolled','','','2026-2027','Semester - 3'],
  ['EMAT101L - Engineering Calculus (Retake)',4,'Core','Core-(Major)','Passed','C','','2026-2027','Sem-1-Supplementary'],
- ['UVAC1003 - Environment and Sustainability',2,'VAC','VAC-(Major)','Passed','C+','','2025-2026','Semester - 2'],
  ['UAEC1002 - Soft Skills and Personality Development',2,'Core','Core-(Major)','Passed','A','','2025-2026','Semester - 2'],
  ['UVAC1002 - Community Project and Social Responsibility',2,'VAC','VAC-(Major)','Passed','C','','2025-2026','Semester - 1'],
- ['2025CSET152 - Object Oriented Programming using Java',4,'Core','Core-(Major)','Passed','B+','','2025-2026','Semester - 2'],
+ ['UVAC1003 - Environment and Sustainability',2,'VAC','VAC-(Major)','Passed','C+','','2025-2026','Semester - 2'],
  ['2025CSET100-P - Computational Thinking and Programming',0,'-','-','Enrolled','','','2025-2026','Semester - 1'],
  ['EMAT102L - Linear Algebra and Ordinary Differential Equations',4,'Core','Core-(Major)','Passed','C+','','2025-2026','Semester - 2'],
  ['2025CSET154 - Digital Design',3,'Core','Core-(Major)','Passed','B','','2025-2026','Semester - 2'],
  ['EPHY117L-P - Electromagnetism and Mechanics',0,'-','-','Enrolled','','','2025-2026','Semester - 1'],
  ['EMAT101L - Engineering Calculus',4,'-','-','Failed','F','','2025-2026','Semester - 1'],
  ['UVAC1002 - Community Project',0,'-','-','Enrolled','','','2025-2026','Semester - 1'],
- ['2025CSET151 - Introduction to Electrical and Electronics Engineering',3,'Core','Core-(Major)','Passed','B','','2025-2026','Semester - 2'],
- ['2025CSET156 - Web Technologies',3,'Core','Core-(Major)','Passed','B','','2025-2026','Semester - 2'],
  ['2025CSET100 - Computational Thinking and Programming',4,'Core','Core-(Major)','Passed','C+','','2025-2026','Semester - 1'],
  ['UAEC1001 - Communication Skills',2,'AEC-1','AEC-1-(Major)','Passed','C','','2025-2026','Semester - 1'],
- ['EPHY117L - Electromagnetism and Mechanics',4,'Core','Core-(Major)','Passed','C','','2025-2026','Semester - 1'],
+ ['EPHY117L - Electromagnetism and Mechanics',4,'Core','Core-(Major)','Passed','C+','','2025-2026','Semester - 1'],
  ['USEC1002 - Leadership and Management Skills',2,'Core','SEC-(Major)','Passed','B+','','2025-2026','Semester - 1'],
- ['UVAC1001 - Inculcation of Human Values and Professional Ethics',2,'VAC','VAC-(Major)','Passed','B','','2025-2026','Semester - 1'],
- ['USEC1001 - Design Thinking',2,'SEC','SEC-(Major)','Passed','B','','2025-2026','Semester - 1'],
- ['UAEC1003 - Foreign Language',2,'AEC','AEC-(Minor)','Passed','A','','2025-2026','Semester - 2']];
+ ['UVAC1001 - Inculcation of Human Values and Professional Ethics',2,'VAC','VAC-(Major)','Passed','C','','2025-2026','Semester - 1'],
+ ['USEC1001 - Professional Skills',2,'SEC','SEC-(Major)','Passed','C','','2025-2026','Semester - 1'],
+ ['2025CSET152 - Object Oriented Programming using Java',4,'Core','Core-(Major)','Passed','B+','','2025-2026','Semester - 2'],
+ ['2025CSET151 - Introduction to Electrical and Electronics Engineering',3,'Core','Core-(Major)','Passed','C','','2025-2026','Semester - 2'],
+ ['2025CSET153 - Discrete Mathematical Structures',3,'Core','Core-(Major)','Passed','C','','2025-2026','Semester - 2']];
 const RESULTS=[
  {name:'SEM-1-SUPPLEMENTARY (JUL-2026)',reg:4,comp:4,sgpa:'5.00',cgpa:'6.07',sem:'Sem-1-Supplementary',courses:[['EMAT101L-R25','Engineering Calculus',4,5,'C']]},
- {name:'SEMESTER - 2 (MAY-2026)',reg:21,comp:21,sgpa:'6.52',cgpa:'5.60',sem:'Semester - 2',courses:[['UVAC1003-R25','Environment and Sustainability',2,6,'C+'],['UAEC1002-R25','Soft Skills and Personality Development',2,9,'A'],['2025CSET154-R25','Digital Design',3,7,'B'],['2025CSET152-R25','Object Oriented Programming using Java',4,8,'B+'],['2025CSET151-R25','Introduction to Electrical and Electronics Engineering',3,7,'B'],['2025CSET156-R25','Web Technologies',3,7,'B'],['EMAT102L-R25','Linear Algebra and Ordinary Differential Equations',4,6,'C+']]},
- {name:'SEMESTER - 1 (DEC-2025)',reg:22,comp:18,sgpa:'4.73',cgpa:'4.73',sem:'Semester - 1',courses:[['EMAT101L-R25','Engineering Calculus',4,0,'F'],['2025CSET100-R25','Computational Thinking and Programming',4,6,'C+'],['UAEC1001-R25','Communication Skills',2,5,'C'],['EPHY117L-R25','Electromagnetism and Mechanics',4,5,'C'],['USEC1002-R25','Leadership and Management Skills',2,8,'B+'],['UVAC1002-R25','Community Project and Social Responsibility',2,5,'C'],['UVAC1001-R25','Inculcation of Human Values and Professional Ethics',2,7,'B'],['USEC1001-R25','Design Thinking',2,7,'B']]}];
+ {name:'SEMESTER - 2 (MAY-2026)',reg:21,comp:21,sgpa:'6.52',cgpa:'5.60',sem:'Semester - 2',courses:[['UAEC1002-R25','Soft Skills and Personality Development',2,9,'A'],['UVAC1003-R25','Environment and Sustainability',2,6,'C+'],['2025CSET154-R25','Digital Design',3,7,'B'],['2025CSET152-R25','Object Oriented Programming using Java',4,8,'B+'],['EMAT102L-R25','Linear Algebra and Ordinary Differential Equations',4,6,'C+'],['2025CSET151-R25','Introduction to Electrical and Electronics Engineering',3,5,'C'],['2025CSET153-R25','Discrete Mathematical Structures',3,5,'C']]},
+ {name:'SEMESTER - 1 (DEC-2025)',reg:22,comp:18,sgpa:'4.73',cgpa:'4.73',sem:'Semester - 1',courses:[['2025CSET100-R25','Computational Thinking and Programming',4,6,'C+'],['EMAT101L-R25','Engineering Calculus',4,0,'F'],['EPHY117L-R25','Electromagnetism and Mechanics',4,6,'C+'],['USEC1002-R25','Leadership and Management Skills',2,8,'B+'],['UAEC1001-R25','Communication Skills',2,5,'C'],['USEC1001-R25','Professional Skills',2,5,'C'],['UVAC1001-R25','Inculcation of Human Values and Professional Ethics',2,5,'C'],['UVAC1002-R25','Community Project and Social Responsibility',2,5,'C']]}];
 
 const MENU=[['institution','account_balance','My Institution'],['messages','forum','Messages'],['attendance','event_available','Attendance'],['exams','calendar_month','Exam schedules'],['reports','bar_chart','Reports'],['progress','show_chart','Progress Report'],['holidays','brightness_7','Holidays'],['cafeteria','restaurant','Cafeteria'],['timetable','table_view','Timetable'],['leave','event_busy','Leave and Gate Pass'],['services','headset_mic','Services'],['enrollment','person_add','Enrollment'],['activity','sports_martial_arts','Activity'],['clearance','check_circle','Clearance'],['announcement','campaign','Announcement'],['feedback','chat_bubble','Feedback'],['gallery','photo_library','Gallery'],['finalresult','emoji_events','Final result'],['room','bed','Room partner selection']];
 
@@ -604,6 +643,377 @@ function openSettings(){$('#nvSet').classList.add('on');const rd=(k,v)=>`<span c
  <div class="sbox"><h4>Website RTL (right to left) changes</h4><p>Mirror the interface for RTL scripts</p><span class="switch ${SET.rtl?'on':''}" onclick="SET.rtl=!SET.rtl;applySet();openSettings()"></span> &nbsp;RTL</div>
  </div></div>`);document.querySelector('.scrim').onclick=closeSet;}
 function closeSet(){$('#nvSet').classList.remove('on');closeOv();}
+/* ================= v2 OVERRIDES (closer to original) ================= */
+LEAVES=_mkLeaves();
+function ago(d){const days=Math.round((TODAY-d)/864e5);const a=Math.abs(days);let s;
+ if(a===0)return 'today';if(a===1)s='a day';else if(a<26)s=a+' days';else if(a<46)s='a month';else if(a<320)s=Math.round(a/30)+' months';else if(a<548)s='a year';else s=Math.round(a/365)+' years';
+ return days>0?s+' ago':'in '+s;}
+const sp=(t)=>`<div class="ptitle">${t}</div>`;
+
+/* My Institution with Policies */
+const POLICIES=[['UNDERTAKING BY STUDENTS AND PARENTS','Annexure 3 (Student and Parent Undertaking)'],['GENERAL GUIDELINES FOR STUDENTS','Annexure 5 (GENERAL GUIDELINES)']];
+PAGES.institution=()=>{const tiles=[['Circular','campaign','#e3f2e5','#2e7d32',0],['Notice Board','notifications','#fff3cd','#b8860b',0],['Curriculum & Syllabus','menu_book','#e3f2e5','#2e7d32',0],['Policies & Regulations','policy','#fde3e3','#d32f2f',2]];
+ const content=S.instTab==='Policies & Regulations'?POLICIES.map(([t,a])=>`<div style="background:#fff;margin:8px 10px;border-left:3px solid var(--accent);padding:10px 12px;display:flex;gap:10px;align-items:flex-start;cursor:pointer" onclick="toast('Opening document is not available in this demo')"><div style="flex:1">${t}<div class="row" style="gap:8px;margin-top:6px;font-size:12.5px;flex-wrap:wrap"><span class="ms" style="font-size:16px">calendar_today</span>10-Sep-2025<span class="badge" style="background:#f1f1f1">Guidelines</span><span class="badge b-bad">New</span></div></div><span class="badge b-ok" style="max-width:42%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a}</span></div>`).join(''):emptyBox(`No ${S.instTab==='Curriculum & Syllabus'?'curriculum and syllabus(s)':S.instTab.toLowerCase()+'(s)'} are available.`);
+ return `<div class="ptitle" style="border-bottom:2px solid var(--accent)">My Institution</div>
+ <div class="card"><div class="vm" onclick="modal('Our Vision','To be a globally recognised university that nurtures innovation, research and responsible leadership.')"><span class="ic"><span class="ms">visibility</span></span>OUR VISION</div>
+ <div class="vm" onclick="modal('Our Mission','To deliver transformative education through industry partnerships, experiential learning and a culture of inquiry.')"><span class="ic"><span class="ms">rocket_launch</span></span>OUR MISSION</div></div>
+ <div class="tiles">${tiles.map(([n,ic,bg,c,cnt])=>`<div class="tile" onclick="S.instTab='${n}';go('institution')"><span class="ms" style="background:${bg};color:${c}">${ic}</span><div>${n}<br><b style="font-weight:500">${cnt}</b></div></div>`).join('')}</div>
+ <div class="tabs" style="overflow:auto;white-space:nowrap">${tiles.map(t=>t[0]).map(t=>`<button class="${S.instTab===t?'on':''}" onclick="S.instTab='${t}';go('institution')">${t}</button>`).join('')}</div>${content}`;};
+
+/* Messages with View Less + reply box */
+S.replies=[];
+PAGES.messages=()=>{const list=MSGS.filter(m=>(m.title+m.from+m.body).toLowerCase().includes(S.msgQ.toLowerCase()));
+ return `${pt('Messages')}<div class="row" style="gap:8px;padding:0 10px"><div class="search" style="flex:1;margin:6px 0"><span class="ms">search</span><input placeholder="Search" value="${S.msgQ}" onchange="S.msgQ=this.value;go('messages')"></div><button class="btn-ghost row" style="border-radius:20px;gap:4px" onclick="sheet('Filter','${['All','Unread','Read','Starred'].map(x=>`<div class=opt onclick=closeOv()>${x}</div>`).join('')}')"><span class="ms" style="font-size:18px">filter_list</span>Filter</button></div>
+ ${list.length?list.map((m,i)=>{const open=S['msgOpen'+i];return `<div class="card" style="background:#e8f4fd;padding:12px;display:flex;gap:10px"><span class="ms" style="color:#999;align-self:center;background:#f2f2f2;border-radius:50%;padding:6px">person</span><div style="flex:1;min-width:0"><div class="row" style="justify-content:space-between;gap:6px"><span style="color:var(--blue)">${m.from}</span><span class="badge b-warn" style="white-space:nowrap">● ${m.date}</span></div><div style="margin:6px 0">${m.title}</div><div style="font-size:13px;color:#333;${open?'':'max-height:118px;overflow:hidden'}">${m.body}</div><button class="link" style="margin-top:4px" onclick="S['msgOpen${i}']=!S['msgOpen${i}'];go('messages')">${open?'View Less':'View More'}</button>
+ ${open?`${S.replies.map(r=>`<div style="background:#fff;border-radius:6px;padding:8px;margin-top:8px;font-size:13px"><b style="font-weight:600">You</b> · ${r[1]}<br>${r[0]}</div>`).join('')}<div style="position:relative;margin-top:10px"><textarea id="rp" class="inp" rows="3" placeholder="Write a reply..." style="resize:vertical;padding-right:40px"></textarea><span class="ms" style="position:absolute;right:10px;bottom:12px;cursor:pointer;color:#444" onclick="sendReply()">send</span></div>`:''}</div></div>`}).join(''):emptyBox('No messages match your search.')}`;};
+function sendReply(){const v=$('#rp').value.trim();if(!v)return toast('Please write a reply');const n=new Date();S.replies.push([v,`${fmt(n)}, ${pad(n.getHours()%12||12)}:${pad(n.getMinutes())} ${n.getHours()<12?'AM':'PM'}`]);go('messages');toast('Reply sent',1);}
+
+/* Attendance (computed from full logs) */
+PAGES.attendance=()=>{let b='';
+ if(S.attTab==='Subject-wise'){b=`<div class="card bars">${SUBJ.map((s,i)=>{const p=attPct(i);return `<div class="bar-row" style="cursor:pointer" onclick="S.attTab='Log';S.attSub=${i};S.attShow='Both';go('attendance')"><div class="lbl">${s.code}</div><div class="bar-track"><div class="bar" data-w="${p}" style="width:0;background:${p>=75?'#2fb44a':'#e8505b'}"></div></div></div>`}).join('')}<div class="axis"><span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span></div></div>`;}
+ else if(S.attTab==='Log'){const recs=mkLog(S.attSub).filter(r=>S.attShow==='Both'||(S.attShow==='Present'?r[2].startsWith('Present'):r[2].startsWith('Absent')));
+  b=`<div style="padding:8px 10px">Show: ${['Absent','Present'].map(x=>`<span class="radio ${S.attShow===x?'on':''}" onclick="S.attShow='${x}';go('attendance')"><i></i>${x}</span>`).join('')}<div style="margin-top:8px"><span class="radio ${S.attShow==='Both'?'on':''}" onclick="S.attShow='Both';go('attendance')"><i></i>Both</span></div></div>
+  <div class="sel sq" onclick="pickSubject()"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${SUBJ[S.attSub].code} - ${SUBJ[S.attSub].name}</span><span class="row" style="color:#888"><span class="ms" style="font-size:16px">close</span><span class="ms" style="font-size:18px">expand_more</span></span></div>
+  <div style="background:#fff">${recs.length?recs.map(r=>`<div class="kv"><span class="k">Date</span><span class="v">${r[0]} (${r[1]})</span></div><div class="kv" style="border-bottom:1px solid #e6e6e6"><span class="k">Status</span><span class="v"><span class="badge ${r[2].startsWith('Present')?'b-ok':'b-bad'}">${r[2]}</span></span></div>`).join(''):emptyBox('No records found!')}</div>`;}
+ else{let P=0,T=0,mP=0,mT=0;SUBJ.forEach((s,i)=>mkLog(i).forEach(r=>{const ok=r[2].startsWith('Present');T++;P+=ok;if(r[0].slice(3)===fmt(TODAY).slice(3)){mT++;mP+=ok;}}));
+  const sem=T?Math.round(P/T*100):0,mon=mT?Math.round(mP/mT*100):0;
+  b=`<div class="card" style="padding:14px;text-align:center">${donut(sem)}<div style="font-size:13px;line-height:1.7">Current semester attendance: <b>${sem}%</b><br>No. of periods present: ${mP}/${mT}<br>Current month : ${MON[TODAY.getMonth()]}-${TODAY.getFullYear()}</div></div><div class="card" style="padding:14px;text-align:center">${donut(mon)}<div style="font-size:13px;line-height:1.7">Current month attendance: <b>${mon}%</b><br>Total periods present: ${P}/${T}</div></div>`;}
+ return `${pt('Attendance','2026-2027')}<div class="sel" onclick="pickSem()">${SEMSEL.replace(/, /g,',')} <span class="ms" style="font-size:16px">arrow_drop_down</span></div>
+ <div class="tabs">${['Subject-wise','Log','Summary'].map(t=>`<button class="${S.attTab===t?'on':''}" onclick="S.attTab='${t}';go('attendance')">${t}</button>`).join('')}</div>${b}`;};
+function pickSubject(){let tmp=S.attSub;window._pick=i=>{tmp=i;document.querySelectorAll('.sheet .opt').forEach((o,k)=>{o.classList.toggle('on',k===i);o.querySelector('.ms').style.visibility=k===i?'visible':'hidden'})};
+ window._done=()=>{S.attSub=tmp;closeOv();go('attendance')};
+ sheet('Select attendance',`<div class="search" style="margin:0 0 6px;border-radius:4px;background:#f3f3f3"><span class="ms">search</span><input placeholder="Search" oninput="document.querySelectorAll('.sheet .opt').forEach(o=>o.style.display=o.textContent.toLowerCase().includes(this.value.toLowerCase())?'':'none')"></div>${SUBJ.map((s,i)=>`<div class="opt ${i===tmp?'on':''}" onclick="_pick(${i})">${s.code} - ${s.name}<span class="ms" style="visibility:${i===tmp?'visible':'hidden'}">check</span></div>`).join('')}`,
+ `<button style="background:#eee" onclick="closeOv()">Clear</button><button class="btn-acc" onclick="_done()">Done</button>`);}
+
+/* Exam schedule semester selector */
+const EXSEMS=[['2026-2027, Semester - 3, B.Tech.(CSE)','No exam schedule found!'],['2025-2026, Sem-1-Supplementary, B.Tech.(CSE)','No exam schedule found!'],['2025-2026, Sem-9-Supplementary, B.Tech.(CSE)','No subjects were enrolled.'],['2025-2026, Sem-7-Supplementary, B.Tech.(CSE)','No subjects were enrolled.'],['2025-2026, Sem-3-Supplementary, B.Tech.(CSE)','No subjects were enrolled.'],['2025-2026, Semester - 2, B.Tech.(CSE)','No exam schedule found!'],['2025-2026, Semester - 1, B.Tech.(CSE)','No exam schedule found!']];
+S.exSem=0;
+PAGES.exams=()=>{let b;const msg=EXSEMS[S.exSem][1];
+ if(S.exProg)b=emptyBox('No progress reports found!');
+ else if(S.exTab==='Upcoming'||S.exSem!==0)b=emptyBox(msg);
+ else{const list=EXAMS.filter(e=>e.join(' ').toLowerCase().includes(S.exQ.toLowerCase()));
+  b=`<div class="row" style="justify-content:space-between;padding:10px;cursor:pointer" onclick="S.exOpen=!S.exOpen;go('exams')"><span>Internal Consolidation<br><span class="link" onclick="event.stopPropagation();go('finalresult')">Result</span></span><span class="ms">${S.exOpen?'expand_less':'expand_more'}</span></div>
+  ${S.exOpen?list.map(e=>`<div class="card" style="border:1px solid #eee">${[['Main exam subject name - code',e[0]],['Exam subject name',e[1]],['Exam subject code',e[2]],['Date','-'],['Time','-']].map(([k,v])=>`<div class="kv"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}<div class="kv" style="border:none"><span class="k">Syllabus</span><span class="ms" style="cursor:pointer" onclick="toast('Syllabus not uploaded yet')">download</span></div></div>`).join('')||emptyBox('No results'):''}`;}
+ return `<div style="background:#fff;min-height:100%"><div class="ptitle" style="background:#fff">Exam Schedule</div><div class="sel sq" style="margin:4px 10px;${S.exProg?'border-color:var(--accent)':''}" onclick="pickExSem()"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${EXSEMS[S.exSem][0]}</span><span class="ms" style="font-size:18px">expand_more</span></div>
+ <div style="text-align:right;padding:6px 10px"><button class="btn-ghost" onclick="S.exProg=!S.exProg;go('exams')">View Progress Report</button></div>
+ <div class="row" style="padding:0 10px;gap:16px">${['Upcoming','All'].map(t=>`<button style="padding:6px 0;${S.exTab===t?'border-bottom:2px solid #111':'color:#888'}" onclick="S.exTab='${t}';S.exProg=false;go('exams')">${t}</button>`).join('')}<div class="search" style="margin:4px 0 4px auto;width:48%"><span class="ms">search</span><input placeholder="Search" value="${S.exQ}" onchange="S.exQ=this.value;S.exTab='All';go('exams')"></div></div>${b}</div>`;};
+function pickExSem(){let tmp=S.exSem;window._xs=i=>{tmp=i;document.querySelectorAll('.sheet .opt').forEach((o,k)=>{o.classList.toggle('on',k===i);o.querySelector('.ms').style.visibility=k===i?'visible':'hidden'})};
+ window._xd=()=>{S.exSem=tmp;S.exProg=false;closeOv();go('exams')};
+ sheet('Select',`<div class="search" style="margin:0 0 6px;border-radius:4px;background:#f3f3f3"><span class="ms">search</span><input placeholder="Search" oninput="document.querySelectorAll('.sheet .opt').forEach(o=>o.style.display=o.textContent.toLowerCase().includes(this.value.toLowerCase())?'':'none')"></div>${EXSEMS.map((s,i)=>`<div class="opt ${i===tmp?'on':''}" onclick="_xs(${i})">${s[0]}<span class="ms" style="visibility:${i===tmp?'visible':'hidden'}">check</span></div>`).join('')}`,`<button class="btn-acc" onclick="_xd()">Done</button>`);}
+
+/* Reports (collapsed by default like original) */
+S.rHall=false;S.rApp=false;
+PAGES.reports=()=>`${pt('Reports')}<div class="res-head" style="background:none;margin:0"><span>Hall ticket</span><button class="btn-ghost" onclick="S.rHall=!S.rHall;go('reports')">View details</button></div>${S.rHall?emptyBox('No hall tickets were found!'):''}
+ <div class="res-head" style="background:none;margin:0"><span>Exam application</span><button class="btn-ghost" onclick="S.rApp=!S.rApp;go('reports')">View details</button></div>${S.rApp?emptyBox('No exam applications were found!'):''}`;
+
+/* Cafeteria: served meals show green "Meal Served On ..." */
+S.served={};
+function nowMin(){const n=new Date();return n.getHours()*60+n.getMinutes();}
+function servedFor(n){const key=fmt(TODAY)+n;if(S.served[key])return S.served[key];if(n==='Lunch'&&nowMin()>=12*60+50)return '12:50 PM';return null;}
+PAGES.cafeteria=()=>`${pt('Cafeteria',`${fmt(TODAY)}-Today-Ground Floor`)}
+ <div class="qr"><div class="row" style="gap:10px;align-items:flex-start"><span class="ms" style="color:#c99a00">qr_code_2</span><div>Do you want to generate a reusable permanent QR code?</div></div>
+ <div style="margin:10px 0 0 34px"><button class="btn-ghost" style="background:#fff" onclick="showQR()">Show my reusable QR code</button><br><button class="btn-acc" style="margin-top:8px" onclick="S.qrSeed++;toast('New QR code generated',1)">Regenerate my reusable QR code</button></div></div>
+ <div style="background:#fff">${mealsFor(TODAY).map(([n,t,items])=>{const sv=servedFor(n);return `<div class="meal" style="margin:0 10px;border-radius:0;border-bottom:1px solid var(--accent);padding:14px 2px"><div class="icon"><svg width="190" height="200" viewBox="0 0 190 200" fill="#68768a"><path d="M30 10a10 10 0 0 1 20 0v60h10V10a10 10 0 0 1 20 0v60h10V10a10 10 0 0 1 20 0v70c0 22-14 38-30 42v68a10 10 0 0 1-20 0v-68c-16-4-30-20-30-42z"/><ellipse cx="148" cy="62" rx="30" ry="56"/><rect x="140" y="100" width="16" height="92" rx="8"/></svg></div>
+ <div>${n} ${t}</div>${items.map(x=>`<div>${x||'&nbsp;'}</div>`).join('')}<div class="row" style="justify-content:space-between;margin-top:8px"><span class="badge" style="background:#e8f4fd;color:#64b5f6;padding:4px 12px;border-radius:12px">${DAY[TODAY.getDay()]}</span>${sv?`<span style="background:#1b8a4c;color:#fff;padding:7px 12px;border-radius:3px;font-size:13.5px">Meal Served On ${sv}</span>`:`<button class="btn-ghost" onclick="serveMeal('${n}')">Select</button>`}</div></div>`}).join('')}</div>`;
+function serveMeal(n){const d=new Date();S.served[fmt(TODAY)+n]=`${pad(d.getHours()%12||12)}:${pad(d.getMinutes())} ${d.getHours()<12?'AM':'PM'}`;go('cafeteria');toast(`${n} marked as served`,1);}
+
+/* Timetable: real weekly data, attendance recorded, date picker, toast on empty days */
+PAGES.timetable=()=>{if(!S.ttDate)S.ttDate=new Date(TODAY);const d=S.ttDate;const hol=HOLS.find(h=>{const a=new Date(h[1]+'T00:00'),b=h[2]?new Date(h[2]+'T00:00'):a;return d>=a&&d<=b;});
+ const cls=hol?[]:(TT[d.getDay()]||[]);const shift=n=>`S.ttDate=new Date(${d.getFullYear()},${d.getMonth()},${d.getDate()+n});S.ttCal=false;go('timetable')`;
+ const past=d<TODAY;
+ return `${pt('Timetable')}<div style="padding:8px 10px 4px">Semester - 3 | 2026-2027</div>
+ <div class="row" style="gap:8px;padding:0 10px;flex-wrap:wrap"><button class="btn-ghost row" onclick="pickSem()">2026-2027, Semester - 3 <span class="ms" style="font-size:16px">arrow_drop_down</span></button><button class="btn-ghost row" style="gap:4px" onclick="S.ttDate=null;S.ttCal=false;go('timetable');toast('Timetable refreshed',1)"><span class="ms" style="font-size:16px">refresh</span>Refresh</button><button class="btn-ghost" onclick="weekly()">Weekly Schedule</button></div>
+ <div style="position:relative"><div class="row" style="justify-content:space-between;padding:12px 30px;background:#fff;margin:10px;border-radius:24px"><span class="ms" style="cursor:pointer" onclick="${shift(-1)}">chevron_left</span><span style="text-decoration:underline;cursor:pointer;font-size:15px" onclick="S.ttCal=!S.ttCal;S.calTT=new Date(${d.getFullYear()},${d.getMonth()},1);go('timetable')">${fmt(d)}</span><span class="ms" style="cursor:pointer" onclick="${shift(1)}">chevron_right</span></div>${S.ttCal?ttCal():''}</div>
+ <div style="background:#fff">${hol?emptyBox(`${+d===+TODAY?'Today':DAY[d.getDay()]} : Holiday-${hol[0]}`):cls.map((c,k)=>`<div class="cls" style="border-bottom:1px solid #e9b9c3"><div class="c">${C[c[0]][0]} ( ${C[c[0]][1]} ) ( ${c[1]} )</div><div style="color:#444">${c[2]} ${c[3]}</div><div style="color:#444">${c[1]}</div>${past&&c[4]==='Lecture'?'<span class="badge b-ok" style="margin:4px 0;border-radius:12px;padding:3px 10px">Attendance recorded</span>':''}<div style="color:#444">${c[4]}</div></div>`).join('')}</div>`;};
+function ttCal(){const m=S.calTT;const first=new Date(m.getFullYear(),m.getMonth(),1).getDay();const dim=new Date(m.getFullYear(),m.getMonth()+1,0).getDate();const prevDim=new Date(m.getFullYear(),m.getMonth(),0).getDate();
+ let cells=['Su','Mo','Tu','We','Th','Fr','Sa'].map(x=>`<div style="font-weight:600">${x}</div>`).join('');
+ for(let i=first-1;i>=0;i--)cells+=`<div style="color:#aaa">${prevDim-i}</div>`;
+ for(let d=1;d<=dim;d++){const on=+new Date(m.getFullYear(),m.getMonth(),d)===+S.ttDate;cells+=`<div style="cursor:pointer;${on?'background:var(--blue);color:#fff;border-radius:4px':''}" onclick="S.ttDate=new Date(${m.getFullYear()},${m.getMonth()},${d});S.ttCal=false;go('timetable')">${d}</div>`;}
+ const tail=(7-(first+dim)%7)%7;for(let i=1;i<=tail;i++)cells+=`<div style="color:#aaa">${i}</div>`;
+ return `<div style="position:absolute;left:40px;right:40px;top:58px;background:#fff;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:10;padding:8px"><div class="row" style="justify-content:space-between;padding:4px 10px"><span class="ms" style="cursor:pointer" onclick="S.calTT=new Date(${m.getFullYear()},${m.getMonth()-1},1);go('timetable')">chevron_left</span><b style="font-weight:500">${['January','February','March','April','May','June','July','August','September','October','November','December'][m.getMonth()]} ${m.getFullYear()}</b><span class="ms" style="cursor:pointer" onclick="S.calTT=new Date(${m.getFullYear()},${m.getMonth()+1},1);go('timetable')">chevron_right</span></div><div class="cal">${cells}</div></div>`;}
+AFTER.timetable=()=>{const d=S.ttDate;const hol=HOLS.find(h=>{const a=new Date(h[1]+'T00:00'),b=h[2]?new Date(h[2]+'T00:00'):a;return d>=a&&d<=b;});if(!hol&&!(TT[d.getDay()]||[]).length&&!S.ttCal)toast('Timetable not finalised / No timetable found');};
+
+/* Leave and Gate Pass: paginated list, Cancel, approval timeline */
+S.lvPg=1;S.lvPer=10;
+const lvBadge=s=>s==='Approved'||s==='Completed'?'b-ok':s==='Cancelled'?'b-warn':'b-ok" style="background:#e6f7e8';
+PAGES.leave=()=>{const pages=Math.ceil(LEAVES.length/S.lvPer);S.lvPg=Math.min(S.lvPg,pages);const sl=LEAVES.slice((S.lvPg-1)*S.lvPer,S.lvPg*S.lvPer);const off=(S.lvPg-1)*S.lvPer;
+ return `${pt('Apply Leave and Gate Pass')}<div style="text-align:right;padding:4px 10px 10px;background:var(--bg)"><button class="btn-acc" onclick="applyLeave()">Apply Leave and Gate Pass</button></div>
+ <div style="background:#fff">${sl.map((l,j)=>`${[['Date',`${l.type}<br>${l.from.split(',')[0]} to ${l.to.split(',')[0]}`],['More',`<button class="dots" onclick="leaveActions(${off+j})">···</button>`],['Reason',l.reason],['Status',`<span class="badge ${lvBadge(l.status)}">${l.status}</span>`]].map(([k,v])=>`<div class="kv"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}`).join('')}
+ ${pagerG('lv','leave',S.lvPg,pages,LEAVES.length,sl.length,S.lvPer)}</div>`;};
+function pagerG(k,page,p,pages,total,shown,per){const set=n=>`S.${k}Pg=${n};go('${page}')`;
+ return `<div style="text-align:right;font-size:12.5px;color:#444;padding:8px 10px">Page (${p} /${pages})  Showing ${shown} of ${total}</div><div class="pager"><button ${p<=1?'disabled':''} onclick="${set(1)}">|&lt;</button><button ${p<=1?'disabled':''} onclick="${set(p-1)}">Prev</button><button class="pri" ${p>=pages?'disabled':''} onclick="${set(p+1)}">Next</button><button ${p>=pages?'disabled':''} onclick="${set(pages)}">&gt;|</button></div>
+ <div class="pager">Page : <input class="inp" style="width:56px;padding:4px" type="number" min="1" max="${pages}" value="${p}" onchange="${set('Math.max(1,Math.min('+pages+',+this.value||1))')}"> of ${pages} <select class="inp" style="width:86px;padding:4px" onchange="S.${k}Per=+this.value;${set(1)}">${[5,10,20].map(n=>`<option value="${n}" ${n===per?'selected':''}>Show ${n}</option>`).join('')}</select></div>`;}
+function leaveActions(i){window._li=i;sheet('Actions',`<div class="opt" onclick="viewLeave(_li)">View</div><div class="opt" onclick="viewLeave(_li,1)">Status</div>`);}
+function viewLeave(i,scroll){const l=LEAVES[i];const can=l.status==='Approved'||l.status==='Submitted';
+ const steps=[['Submitted',l.t1||l.from.replace(/-([A-Za-z]{3})-/,(m,mm)=>'-'+pad(MON.indexOf(mm)+1)+'-')],['Parent approval',l.status==='Submitted'?null:(l.t2?`Approved on ${l.t2} By ${ST.parentAcc||'AMIT GAUTAM'}`:'Approved')],['Warden approval',l.status==='Submitted'?null:l.status==='Cancelled'?'Cancelled':(l.t3?`Approved on ${l.t3}`:'Approved')]];
+ modal(l.type,`<div style="font-size:15px;margin-bottom:8px">${l.type}</div><div class="row" style="gap:10px;margin-bottom:6px"><span class="badge ${lvBadge(l.status)}" style="font-size:14px;padding:4px 10px">${l.status}</span>${can?`<button class="btn-ghost" onclick="cancelLeave(${i})">Cancel</button>`:''}</div>
+ ${[['From Date',l.from],['To Date',l.to],['Reason',l.reason]].map(([k,v])=>`<div class="pl" style="padding:6px 0;grid-template-columns:30% 12px 1fr"><span style="font-size:12.5px">${k.toUpperCase()}</span><span>:</span><span>${v}</span></div>`).join('')}
+ <div style="margin-top:8px">ATTACHMENT</div>${l.att?`<span class="link" style="font-size:12.5px">${l.att}</span>${l.img?`<img src="${l.img}" style="width:100%;margin-top:8px;border-radius:6px">`:`<div style="height:150px;margin-top:8px;border-radius:6px;background:#eceae6;display:grid;place-items:center;color:#999"><span class="ms" style="font-size:44px">image</span></div>`}`:'<div style="color:#888;font-size:13px">No attachment</div>'}
+ <div id="tl" style="display:grid;grid-template-columns:1fr 1fr 1fr;margin-top:16px;position:relative;text-align:center;font-size:12.5px;color:var(--blue)"><div style="position:absolute;top:16px;left:16%;right:16%;height:3px;background:var(--blue)"></div>${steps.map(([n,t])=>`<div style="position:relative"><div style="width:34px;height:34px;border-radius:50%;margin:0 auto 6px;display:grid;place-items:center;background:${t?'var(--blue)':'#cfd8dc'};color:#fff"><span class="ms" style="font-size:20px">${t==='Cancelled'?'close':t?'check':'more_horiz'}</span></div>${n}<br>${t||'Pending'}</div>`).join('')}</div>`);
+ if(scroll)setTimeout(()=>{const t=document.getElementById('tl');t&&t.scrollIntoView({block:'center'})},50);}
+function cancelLeave(i){LEAVES[i].status='Cancelled';closeOv();go('leave');toast('Request cancelled',1);}
+function submitLeave(e){e.preventDefault();const f=s=>{const d=new Date($(s).value);return `${fmt(d)}, ${pad((d.getHours()%12)||12)}:${pad(d.getMinutes())} ${d.getHours()<12?'AM':'PM'}`};
+ if(new Date($('#lvTo').value)<new Date($('#lvFrom').value)){toast('To date must be after From date');return false;}
+ const file=$('#lvFile').files[0];const n=new Date();const rec={type:$('#lvType').value,from:f('#lvFrom'),to:f('#lvTo'),reason:$('#lvReason').value,status:'Submitted',att:file?file.name:'',t1:`${pad(n.getDate())}-${pad(n.getMonth()+1)}-${n.getFullYear()}, ${pad(n.getHours()%12||12)}:${pad(n.getMinutes())} ${n.getHours()<12?'AM':'PM'}`};
+ if(file&&file.type.startsWith('image/'))rec.img=URL.createObjectURL(file);
+ LEAVES.unshift(rec);S.lvPg=1;closeOv();go('leave');toast('Leave request submitted successfully',1);return false;}
+
+/* Services: list with tabs, new request page */
+S.svcTab='In Progress';S.svcReqs=[];
+PAGES.services=()=>{const list=S.svcReqs.filter(r=>r.st===S.svcTab);
+ return `${pt('Services')}<div style="padding:4px 10px 8px"><button class="btn-acc" onclick="go('newservice')">New service request</button></div>
+ <div class="tabs">${['In Progress','Completed'].map(t=>`<button class="${S.svcTab===t?'on':''}" onclick="S.svcTab='${t}';go('services')">${t}</button>`).join('')}</div>
+ ${list.length?list.map(r=>`<div class="res-head"><span>${r.n}<br><span style="font-size:12px;color:#555">${r.d}</span></span><span class="badge b-warn">${r.st}</span></div>`).join(''):emptyBox('No record(s) found.')}`;};
+PAGES.newservice=()=>`<div style="background:#fff;min-height:100%"><div class="row" style="gap:10px;padding:12px 10px;font-size:16px;cursor:pointer" onclick="go('services')"><span class="ms">arrow_back</span>New service request</div>
+ <div style="padding:6px 10px;font-size:15px">CATEGORY</div><div style="background:var(--bg2);padding:8px 14px;margin:0 10px;font-size:13px">UNDERTAKING</div><div style="padding:10px 14px;font-size:13px;margin:0 10px;border:1px solid #f0f0f0">Odd Semester Supplementary Examinations (AY 2026–27)</div>
+ <div style="padding:14px 10px 4px;font-size:15px">Service Name</div><div class="search"><span class="ms">search</span><input placeholder="Search service" value="${S.svcQ}" onchange="S.svcQ=this.value;go('newservice')"></div>
+ ${SERVICES.filter(s=>s.join(' ').toLowerCase().includes(S.svcQ.toLowerCase())).map(s=>`<div class="res-head" style="border:1px solid #eee;cursor:pointer" onclick="svcForm('${s[0]}')"><span>${s[0]}<br><span style="font-size:12px;color:#555">${s[1]}</span></span><span class="ms">chevron_right</span></div>`).join('')}</div>`;
+function svcForm(n){window._svn=n;modal(n,`<p style="font-size:13px;color:#555;margin-bottom:10px">Odd Semester Supplementary Examinations (AY 2026–27)</p><div class="formrow"><label>Parent's name *</label><input class="inp" id="svP"></div><div class="formrow"><label>Remarks</label><textarea class="inp" rows="3"></textarea></div><label style="font-size:13px;display:flex;gap:8px;margin-bottom:12px"><input type="checkbox" id="svC"> I and my parent agree to the terms of this undertaking.</label><button class="btn-acc" style="width:100%;padding:11px" onclick="if(!$('#svC').checked||!$('#svP').value){toast('Please fill required fields and accept');return}S.svcReqs.unshift({n:_svn,d:fmt(new Date()),st:'In Progress'});closeOv();S.svcTab='In Progress';go('services');toast('Service request submitted',1)">Submit request</button>`);}
+
+/* Clearance */
+const CLEAR=[['20-Jul-2026','20-Jul-2026, 01:48 PM','22-Jul-2026, 10:41 AM'],['20-Jul-2026','20-Jul-2026, 01:45 PM','20-Jul-2026, 03:12 PM'],['02-Jul-2026','02-Jul-2026, 01:06 PM','02-Jul-2026, 05:39 PM'],['02-Jul-2026','02-Jul-2026, 01:03 PM','02-Jul-2026, 05:36 PM'],['29-Dec-2025','29-Dec-2025, 03:45 PM','29-Dec-2025, 04:16 PM']];
+S.clTab='On hold';
+PAGES.clearance=()=>`${pt('Clearance')}<div class="tabs">${['On hold','Cleared'].map(t=>`<button class="${S.clTab===t?'on':''}" onclick="S.clTab='${t}';go('clearance')">${t}</button>`).join('')}</div>
+ ${S.clTab==='On hold'?emptyBox('No record(s) found.'):`<div style="background:#fff">${CLEAR.map((c,i)=>`<div class="row" style="justify-content:space-between;padding:10px;border-bottom:1px solid #f0f0f0"><div>Unpaid Fee<div style="font-size:12.5px;color:#444">Cleared&nbsp; ${c[0]}<br>Ashwani&nbsp; Varshney</div></div><button class="btn-ghost" onclick="go('clrdetail',${i})">View details</button></div>`).join('')}</div>`}`;
+PAGES.clrdetail=(i)=>{const c=CLEAR[i||0];return `<div class="ptitle row" style="gap:10px"><span class="ms" style="cursor:pointer" onclick="S.clTab='Cleared';go('clearance')">arrow_back</span>Clearance</div><div style="padding:10px;background:#fff;min-height:100%">
+ <div style="font-size:15px">Reason to hold</div><div style="color:var(--blue);margin-bottom:10px">Unpaid Fee</div>
+ ${[['Impacts','Enrollment'],['Created by','Ashwani&nbsp; Varshney'],['Created on',c[1].split(',')[0]]].map(([k,v])=>`<div class="pl" style="padding:5px 0;grid-template-columns:34% 12px 1fr"><span>${k}</span><span>:</span><span>${v}</span></div>`).join('')}
+ <div style="font-size:15px;margin-top:10px">Attachments</div>${emptyBox('No attachments found!').replace('margin:10px','margin:6px 0')}<div style="font-size:15px">Remarks</div>
+ <div style="font-size:15px;margin-top:16px">Updates</div><div style="border-left:2px solid #ddd;margin:8px 0 0 7px;padding-left:16px">
+ <div style="position:relative;margin-bottom:16px"><i style="position:absolute;left:-24px;top:3px;width:14px;height:14px;border-radius:50%;background:#1b8a4c"></i>Created Hold<div style="font-size:13px;color:#444;margin-top:4px">Enrollment<br>${c[1]}</div></div>
+ <div style="position:relative"><i style="position:absolute;left:-24px;top:3px;width:14px;height:14px;border-radius:50%;background:#1b8a4c"></i>Cleared Impact<div style="margin:6px 0"><span class="badge" style="background:#f1f1f1">FEE</span></div><div style="font-size:13px;color:#444">Enrollment<br>${c[2]}</div></div></div></div>`;};
+
+PAGES.announcement=()=>`${pt('Announcements')}${emptyBox('No new announcements found!')}`;
+PAGES.gallery=()=>`${pt('Gallery')}<div class="search" style="margin:8px 30px"><span class="ms">search</span><input placeholder="Search gallery"></div>${emptyBox('No data found.')}`;
+
+/* Room partner: selection closed */
+PAGES.room=()=>S.roomDet?`<div class="ptitle row" style="gap:10px"><span class="ms" style="cursor:pointer" onclick="S.roomDet=0;go('room')">arrow_back</span>Room partner selection</div><div style="background:#fde3e3;margin:10px;padding:10px;border-radius:4px;display:flex;gap:10px"><span class="ms" style="color:var(--bad)">report</span><div><div style="color:var(--bad)">Room details</div><div style="font-size:13px">Room partner selection process was closed on 30-Jul-2026</div></div></div>`
+ :`${pt('Room partner selection','Start sending and receiving room requests after selecting your preferred room type')}<div class="res-head" style="background:none;margin:0"><span>TRIPLE SHARING</span><button class="btn-acc" onclick="S.roomDet=1;go('room')">SELECT</button></div>`;
+
+/* ================= DATA LAYER + ADMIN PANEL ================= */
+const ADMIN_H=['9d63b2032bca8ffc8a33509f5cd7e229bb1c36ab6baacef9c6683f180ba20d6f','8e48371505654f06838082fc6e8401c73d0c27ff0589fa105c4b5280325b7e8e'];
+function sha256(ascii){function r(v,a){return(v>>>a)|(v<<(32-a))}const mp=Math.pow,maxWord=mp(2,32);let result='',words=[],abl=ascii.length*8,hash=[],k=[],pc=0,isC={};
+ for(let c=2;pc<64;c++){if(!isC[c]){for(let i=0;i<313;i+=c)isC[i]=c;hash[pc]=(mp(c,.5)*maxWord)|0;k[pc++]=(mp(c,1/3)*maxWord)|0;}}
+ ascii=unescape(encodeURIComponent(ascii))+'\x80';while(ascii.length%64-56)ascii+='\x00';
+ for(let i=0;i<ascii.length;i++){const j=ascii.charCodeAt(i);words[i>>2]|=j<<((3-i)%4)*8;}
+ words[words.length]=((abl/maxWord)|0);words[words.length]=(abl);
+ for(let j=0;j<words.length;){const w=words.slice(j,j+=16),oh=hash.slice(0,8);hash=hash.slice(0,8);
+  for(let i=0;i<64;i++){const w15=w[i-15],w2=w[i-2],a=hash[0],e=hash[4];
+   const t1=hash[7]+(r(e,6)^r(e,11)^r(e,25))+((e&hash[5])^((~e)&hash[6]))+k[i]+(w[i]=(i<16)?w[i]:(w[i-16]+(r(w15,7)^r(w15,18)^(w15>>>3))+w[i-7]+(r(w2,17)^r(w2,19)^(w2>>>10)))|0);
+   const t2=(r(a,2)^r(a,13)^r(a,22))+((a&hash[1])^(a&hash[2])^(hash[1]&hash[2]));hash=[(t1+t2)|0].concat(hash);hash[4]=(hash[4]+t1)|0;}
+  for(let i=0;i<8;i++)hash[i]=(hash[i]+oh[i])|0;}
+ for(let i=0;i<8;i++)for(let j=3;j+1;j--){const b=(hash[i]>>(j*8))&255;result+=((b<16)?0:'')+b.toString(16);}return result;}
+
+const DBX={};
+const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const lsSet=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}};
+const DAYS7=[0,1,2,3,4,5,6];
+function defaultMeals(){const m={};DAYS7.forEach(w=>{const d=new Date(2026,10,15+w);m[w]=mealsFor(d);});return m;}
+function setArr(a,b){if(Array.isArray(b)){a.length=0;b.forEach(x=>a.push(x));}}
+function snapshotDB(){return {rev:Date.now(),profile:{...ST},subjects:SUBJ.map(s=>({code:s.code,name:s.name})),att:DBX.att||{},meals:DBX.meals||defaultMeals(),served:DBX.served||{},
+ results:RESULTS,curriculum:CUR,timetable:TT,holidays:HOLS,messages:MSGS,leaves:LEAVES,exams:EXAMS,clearance:CLEAR};}
+function applyDB(db){if(!db)return;if(db.profile)Object.assign(ST,db.profile);
+ ['results','curriculum','holidays','messages','exams','clearance'].forEach(k=>{if(db[k])setArr({results:RESULTS,curriculum:CUR,holidays:HOLS,messages:MSGS,exams:EXAMS,clearance:CLEAR}[k],db[k]);});
+ if(db.timetable){Object.keys(TT).forEach(k=>delete TT[k]);Object.assign(TT,db.timetable);}
+ if(db.leaves)LEAVES=db.leaves;
+ if(db.subjects)db.subjects.forEach((s,i)=>{if(SUBJ[i]){SUBJ[i].code=s.code;SUBJ[i].name=s.name;}});
+ DBX.att=db.att||{};DBX.meals=db.meals;DBX.served=db.served||{};DBX.rev=db.rev||0;for(const k in _LOGS)delete _LOGS[k];}
+// data-aware versions of earlier helpers
+const _mkLogGen=mkLog;
+mkLog=function(i){const c=SUBJ[i].code;if(DBX.att&&DBX.att[c])return DBX.att[c];return _mkLogGen(i);};
+const _mealsGen=mealsFor;
+mealsFor=function(d){return (DBX.meals&&DBX.meals[d.getDay()])||_mealsGen(d);};
+servedFor=function(n){const key=fmt(TODAY)+'|'+n;return (DBX.served&&DBX.served[key])||null;};
+serveMeal=function(n){if(!S.isAdmin){toast(n+' selected',1);return;}const d=new Date();DBX.served=DBX.served||{};DBX.served[fmt(TODAY)+'|'+n]=`${pad(d.getHours()%12||12)}:${pad(d.getMinutes())} ${d.getHours()<12?'AM':'PM'}`;if(S.isAdmin)saveDraft();go('cafeteria');toast(`${n} marked as served`,1);};
+
+async function loadDB(){let remote=null,draft=null;
+ try{const r=await fetch('data.json?t='+Date.now(),{cache:'no-store'});if(r.ok)remote=await r.json();}catch(e){}
+ try{const d=lsGet('mc_draft');if(d)draft=JSON.parse(d);}catch(e){}
+ if(draft&&remote&&(remote.rev||0)>=(draft.rev||0)){lsSet('mc_draft',null);draft=null;}
+ const db=draft||remote;if(db){applyDB(db);if(!$('#app').classList.contains('hidden'))go(CUR_PAGE);}}
+loadDB();
+
+/* ---------- admin login ---------- */
+doLogin=function(e){e.preventDefault();const u=$('#lgUser').value.trim().toLowerCase(),pw=$('#lgPass').value;
+ if(!u||!pw){$('#lgErr').classList.remove('hidden');return false;}$('#lgErr').classList.add('hidden');
+ if(sha256(u)===ADMIN_H[0]&&sha256(pw)===ADMIN_H[1]){S.isAdmin=true;enterApp();go('admin');}else{S.isAdmin=false;enterApp();}
+ updAdminFab();return false;};
+const _logout=logout;logout=function(){S.isAdmin=false;updAdminFab();_logout();};
+function updAdminFab(){let f=document.getElementById('adminFab');if(!f){f=document.createElement('button');f.id='adminFab';f.innerHTML='<span class="ms" style="font-size:18px">admin_panel_settings</span> Admin';
+ f.style.cssText='position:absolute;right:14px;bottom:70px;z-index:20;background:#263238;color:#fff;border-radius:20px;padding:8px 14px;display:flex;gap:6px;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.3);font-size:13px';
+ f.onclick=()=>go('admin');$('#phone').appendChild(f);}f.style.display=S.isAdmin&&!$('#app').classList.contains('hidden')?'flex':'none';}
+['admin','ad_profile','ad_att','ad_cafe','ad_results','ad_json'].forEach(p=>NOSTRIP.push(p));
+
+function saveDraft(){const db=snapshotDB();DBX.rev=db.rev;lsSet('mc_draft',JSON.stringify(db));S.dirty=true;}
+const adHead=(t,back='admin')=>`<div class="ptitle row" style="gap:10px;background:#263238;color:#fff;padding:12px 10px"><span class="ms" style="cursor:pointer" onclick="go('${back}')">arrow_back</span>${t}</div>`;
+const adBox=(inner)=>`<div class="card" style="padding:12px">${inner}</div>`;
+const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+
+PAGES.admin=()=>{if(!S.isAdmin)return emptyBox('Admin access only');const gh=JSON.parse(lsGet('mc_gh')||'{}');const pending=!!lsGet('mc_draft');
+ const sec=[['ad_profile','person','Profile & student details'],['ad_att','event_available','Attendance logs'],['ad_cafe','restaurant','Cafeteria menu & served meals'],['ad_results','emoji_events','Final results'],
+  ['ad_json:timetable','table_view','Timetable'],['ad_json:holidays','brightness_7','Holidays'],['ad_json:messages','forum','Messages'],['ad_json:leaves','event_busy','Leave & Gate Pass'],['ad_json:curriculum','bookmark','Curriculum'],['ad_json:exams','calendar_month','Exam schedule'],['ad_json:clearance','check_circle','Clearance']];
+ return `<div class="ptitle" style="background:#263238;color:#fff;padding:14px 10px">Admin Panel<div style="font-size:12px;opacity:.8">Signed in as administrator</div></div>
+ ${adBox(`<div class="row" style="gap:8px"><span class="ms" style="color:${pending?'#e65100':'#2e7d32'}">${pending?'pending':'cloud_done'}</span><div style="flex:1;font-size:13.5px">${pending?'You have changes that are only on this device. Publish to show them on every phone.':'Everything is published.'}</div></div>
+ <div class="row" style="gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn-acc" onclick="publishDB()">Publish to all devices</button><button class="btn-ghost" onclick="ghSettings()">GitHub settings${gh.token?' ✓':''}</button></div>`)}
+ <div class="card">${sec.map(([id,ic,l])=>{const [pg,arg]=id.split(':');return `<div class="row opt" style="gap:12px;padding:12px" onclick="go('${pg}'${arg?`,'${arg}'`:''})"><span class="ms" style="color:var(--accent)">${ic}</span><span style="flex:1">${l}</span><span class="ms">chevron_right</span></div>`}).join('')}</div>
+ ${adBox(`<div style="font-weight:600;margin-bottom:8px">Backup</div><div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn-ghost" onclick="dlDB()">Download data.json</button><label class="btn-ghost" style="cursor:pointer">Import data.json<input type="file" accept=".json" hidden onchange="importDB(this)"></label><button class="btn-ghost" style="color:var(--bad)" onclick="resetDB()">Discard unpublished changes</button></div>`)}
+ <div style="padding:6px 10px 80px"><button class="btn-ghost" onclick="go('profile')">View app as student</button></div>`;};
+
+/* profile */
+const PF=[['name','Name (header)'],['first','First Name'],['last','Last Name'],['status','Student Status'],['adm','Admission No.'],['admYear','Admission Year'],['roll','Roll No.'],['degree','Degree'],['dept','Department'],['sem','Semester'],['course','Course Name'],['college','College'],['plan','Curriculum Plan'],['validity','Program Validity Date'],['dob','DOB'],['gender','Gender'],['parentAcc','Parent account name (shown on approvals)'],['father',"Father's Name"],['mother',"Mother's Name"],['address','Address'],['city','City'],['state','State'],['email','Email'],['phone','Mobile']];
+PAGES.ad_profile=()=>`${adHead('Profile & student details')}${adBox(PF.map(([k,l])=>`<div class="formrow"><label>${l}</label><input class="inp" value="${esc(ST[k])}" onchange="ST['${k}']=this.value;saveDraft()"></div>`).join('')+`<div style="font-size:12px;color:#666">Changes save automatically on this device.</div>`)}`;
+
+/* attendance */
+S.adSub=0;
+function attList(i){const c=SUBJ[i].code;DBX.att=DBX.att||{};if(!DBX.att[c])DBX.att[c]=mkLog(i).map(r=>r.slice());return DBX.att[c];}
+const ATT_ST=['Present','Absent','Present (On Duty Submitted)','Absent (On Duty Submitted)'];
+const toISO=s=>{const [d,m,y]=s.split('-');return `${y}-${pad(MON.indexOf(m)+1)}-${d}`;};
+const fromISO=s=>{const [y,m,d]=s.split('-');return `${d}-${MON[+m-1]}-${y}`;};
+PAGES.ad_att=()=>{const i=S.adSub;const list=mkLog(i);
+ return `${adHead('Attendance logs')}<div class="pad"><select class="inp" onchange="S.adSub=+this.value;go('ad_att')">${SUBJ.map((s,k)=>`<option value="${k}" ${k===i?'selected':''}>${s.code} - ${s.name}</option>`).join('')}</select>
+ <div class="row" style="gap:8px;margin-top:8px;flex-wrap:wrap"><input class="inp" style="flex:1;min-width:150px" id="aSubName" value="${esc(SUBJ[i].name)}" placeholder="Subject name"><button class="btn-ghost" onclick="SUBJ[${i}].name=$('#aSubName').value;saveDraft();toast('Subject renamed',1)">Rename</button></div>
+ <div style="margin-top:6px;font-size:13px">Attendance: <b>${attPct(i)}%</b> · ${list.length} classes</div></div>
+ ${adBox(`<div style="font-weight:600;margin-bottom:8px">Add a class</div><div class="row" style="gap:6px;flex-wrap:wrap"><input type="date" class="inp" id="aD" style="flex:1;min-width:130px" value="${toISO(fmt(TODAY))}"><input class="inp" id="aT" style="flex:1;min-width:110px" placeholder="15:55 - 16:55" value="${SUBJ[i].slots&&SUBJ[i].slots[0]?SUBJ[i].slots[0][1]:''}"></div>
+ <select class="inp" id="aS" style="margin-top:6px">${ATT_ST.map(s=>`<option>${s}</option>`).join('')}</select><button class="btn-acc" style="margin-top:8px;width:100%" onclick="addAtt()">Add</button>`)}
+ <div class="card">${list.map((r,k)=>`<div style="padding:8px 10px;border-bottom:1px solid #eee"><div class="row" style="gap:6px"><input type="date" class="inp" style="flex:1;padding:6px" value="${toISO(r[0])}" onchange="attEdit(${k},0,fromISO(this.value))"><input class="inp" style="flex:1;padding:6px" value="${esc(r[1])}" onchange="attEdit(${k},1,this.value)"><span class="ms" style="color:var(--bad);cursor:pointer" onclick="attDel(${k})">delete</span></div>
+ <select class="inp" style="margin-top:6px;padding:6px;color:${r[2].startsWith('Present')?'var(--ok)':'var(--bad)'}" onchange="attEdit(${k},2,this.value)">${ATT_ST.map(s=>`<option ${s===r[2]?'selected':''}>${s}</option>`).join('')}</select></div>`).join('')||emptyBox('No classes yet')}</div>`;};
+function sortAtt(l){l.sort((a,b)=>new Date(toISO(b[0])+'T'+b[1].slice(0,5))-new Date(toISO(a[0])+'T'+a[1].slice(0,5)));}
+function addAtt(){const d=$('#aD').value,t=$('#aT').value.trim();if(!d||!t)return toast('Enter date and time');const l=attList(S.adSub);l.push([fromISO(d),t,$('#aS').value]);sortAtt(l);saveDraft();go('ad_att');toast('Class added',1);}
+function attEdit(k,f,v){const l=attList(S.adSub);l[k][f]=v;if(f!==2)sortAtt(l);saveDraft();if(f!==1)go('ad_att');}
+function attDel(k){attList(S.adSub).splice(k,1);saveDraft();go('ad_att');}
+
+/* cafeteria */
+S.adDay=TODAY.getDay();S.adServeDate=toISO(fmt(TODAY));
+function mealsDay(w){DBX.meals=DBX.meals||defaultMeals();return DBX.meals[w];}
+PAGES.ad_cafe=()=>{const w=S.adDay;const ms=mealsDay(w);const sd=fromISO(S.adServeDate);
+ return `${adHead('Cafeteria')}${adBox(`<div style="font-weight:600;margin-bottom:6px">Meal served times</div><div style="font-size:12.5px;color:#555;margin-bottom:8px">Pick a date and type the time you were served (e.g. 12:50 PM). Leave empty to show the "Select" button.</div>
+ <input type="date" class="inp" value="${S.adServeDate}" onchange="S.adServeDate=this.value;S.adDay=new Date(this.value+'T00:00').getDay();go('ad_cafe')">
+ ${['Breakfast','Lunch','Snack','Dinner'].map(n=>{const key=sd+'|'+n;const v=DBX.served&&key in DBX.served?DBX.served[key]:'';return `<div class="row" style="gap:8px;margin-top:8px"><span style="width:80px">${n}</span><input class="inp" style="flex:1" placeholder="not served" value="${esc(v)}" onchange="DBX.served=DBX.served||{};DBX.served['${key}']=this.value.trim();saveDraft()"></div>`}).join('')}`)}
+ <div class="tabs" style="overflow:auto;white-space:nowrap;background:#fff;margin:0 10px">${DAY.map((d,k)=>`<button class="${k===w?'on':''}" onclick="S.adDay=${k};go('ad_cafe')">${d.slice(0,3)}</button>`).join('')}</div>
+ ${ms.map((m,k)=>adBox(`<div class="row" style="gap:8px"><input class="inp" style="flex:1" value="${esc(m[0])}" onchange="mealsDay(${w})[${k}][0]=this.value;saveDraft()"><input class="inp" style="flex:1.4" value="${esc(m[1])}" onchange="mealsDay(${w})[${k}][1]=this.value;saveDraft()"></div>
+ <label style="font-size:12.5px;display:block;margin-top:8px">Menu items (one per line)</label><textarea class="inp" rows="${Math.max(4,m[2].length)}" onchange="mealsDay(${w})[${k}][2]=this.value.split('\\n');saveDraft()">${esc(m[2].join('\n'))}</textarea>`)).join('')}
+ <div class="pad"><button class="btn-ghost" onclick="copyMenu()">Copy this day's menu to all days</button></div>`;};
+function copyMenu(){const src=JSON.stringify(mealsDay(S.adDay));DAYS7.forEach(w=>{if(w!==S.adDay){const ab=DAY[w].slice(0,3);DBX.meals[w]=JSON.parse(src).map(m=>[m[0],m[1],m[2].map(x=>x.replace(/\((Sun|Mon|Tue|Wed|Thu|Fri|Sat)\)/,'('+ab+')'))]);}});saveDraft();toast('Copied to all days',1);}
+
+/* results */
+PAGES.ad_results=()=>`${adHead('Final results')}${RESULTS.map((r,i)=>adBox(`<div class="row" style="justify-content:space-between"><b style="font-weight:600">Semester ${i+1}${i===0?' (shown as Last Semester)':''}</b><span class="ms" style="color:var(--bad);cursor:pointer" onclick="if(RESULTS.length>1){RESULTS.splice(${i},1);saveDraft();go('ad_results')}">delete</span></div>
+ ${[['name','Title'],['sem','Semester label'],['reg','Credits registered'],['comp','Credits completed'],['sgpa','SGPA'],['cgpa','CGPA']].map(([k,l])=>`<div class="formrow" style="margin:6px 0"><label>${l}</label><input class="inp" value="${esc(r[k])}" onchange="RESULTS[${i}]['${k}']=this.value;saveDraft()"></div>`).join('')}
+ <div style="font-size:12.5px;margin:8px 0 4px">Courses: code · name · credit · grade point · grade</div>
+ ${r.courses.map((c,k)=>`<div style="border:1px solid #eee;border-radius:6px;padding:6px;margin-bottom:6px"><div class="row" style="gap:4px">${[0,1].map(f=>`<input class="inp" style="flex:${f?2:1};padding:6px" value="${esc(c[f])}" onchange="RESULTS[${i}].courses[${k}][${f}]=this.value;saveDraft()">`).join('')}</div><div class="row" style="gap:4px;margin-top:4px">${[2,3,4].map(f=>`<input class="inp" style="flex:1;padding:6px" value="${esc(c[f])}" onchange="RESULTS[${i}].courses[${k}][${f}]=${f<4?'+this.value':'this.value'};saveDraft()">`).join('')}<span class="ms" style="color:var(--bad);cursor:pointer" onclick="RESULTS[${i}].courses.splice(${k},1);saveDraft();go('ad_results')">delete</span></div></div>`).join('')}
+ <button class="btn-ghost" onclick="RESULTS[${i}].courses.push(['CODE-R25','Course name',4,0,'C']);saveDraft();go('ad_results')">+ Add course</button>`)).join('')}
+ <div class="pad"><button class="btn-acc" onclick="RESULTS.unshift({name:'NEW SEMESTER',reg:0,comp:0,sgpa:'0.00',cgpa:'0.00',sem:'Semester - 3',courses:[]});saveDraft();go('ad_results')">+ Add semester (newest first)</button></div>`;
+
+/* generic JSON editors */
+const JS_SEC={timetable:['Timetable','Keys 1–5 are Mon–Fri. Each class: [course key (ps, ds, dbms, mp, dev, er), room, time, teacher, type].',()=>TT],
+ holidays:['Holidays','[name, start date YYYY-MM-DD, optional end date].',()=>HOLS],messages:['Messages','from, date, title, body (HTML allowed).',()=>MSGS],
+ leaves:['Leave & Gate Pass','type, from, to, reason, status (Approved / Submitted / Completed / Cancelled), att.',()=>LEAVES],
+ curriculum:['Curriculum','[course, credits, category, sub category, status, grade, min grade, academic year, semester].',()=>CUR],
+ exams:['Exam schedule','[main exam subject name - code, exam subject name, exam subject code].',()=>EXAMS],clearance:['Clearance','[cleared date, created on, cleared on].',()=>CLEAR]};
+PAGES.ad_json=(k)=>{k=k||S.adJson;S.adJson=k;const [t,help,get]=JS_SEC[k];
+ return `${adHead(t)}${adBox(`<div style="font-size:12.5px;color:#555;margin-bottom:8px">${help} Edit carefully: keep the quotes, commas and brackets.</div><textarea id="adJ" class="inp" rows="22" style="font-family:monospace;font-size:12px;white-space:pre">${esc(JSON.stringify(get(),null,1))}</textarea>
+ <button class="btn-acc" style="width:100%;margin-top:8px" onclick="saveJson('${k}')">Save</button>`)}`;};
+function saveJson(k){let v;try{v=JSON.parse($('#adJ').value);}catch(e){return toast('Not valid JSON: '+e.message);}
+ const db={};db[k]=v;applyDB({...snapshotDB(),...db});saveDraft();toast('Saved',1);}
+
+/* backup */
+function dlDB(){const blob=new Blob([JSON.stringify(snapshotDB(),null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='data.json';document.body.appendChild(a);a.click();a.remove();}
+function importDB(inp){const f=inp.files[0];if(!f)return;f.text().then(t=>{try{applyDB(JSON.parse(t));saveDraft();go('admin');toast('Imported',1);}catch(e){toast('Invalid file');}});}
+function resetDB(){modal('Discard changes?',`<p>This removes changes on this device that are not published yet.</p><div class="row" style="justify-content:flex-end;gap:10px;margin-top:16px"><button class="btn-ghost" onclick="closeOv()">Cancel</button><button class="btn-acc" onclick="lsSet('mc_draft',null);location.reload()">Discard</button></div>`);}
+
+/* publish to GitHub */
+function ghSettings(){const g=JSON.parse(lsGet('mc_gh')||'{}');
+ modal('GitHub settings',`<p style="font-size:12.5px;color:#555;margin-bottom:10px">Saved only on this device. The token lets this panel update <b>data.json</b> in your repo.</p>
+ ${[['owner','Username',g.owner||'bangpinkshow-sketch'],['repo','Repository',g.repo||'MyCamu'],['branch','Branch',g.branch||'main'],['token','Access token',g.token||'']].map(([k,l,v])=>`<div class="formrow"><label>${l}</label><input class="inp" id="gh_${k}" ${k==='token'?'type="password"':''} value="${esc(v)}"></div>`).join('')}
+ <button class="btn-acc" style="width:100%;padding:10px" onclick="lsSet('mc_gh',JSON.stringify({owner:$('#gh_owner').value.trim(),repo:$('#gh_repo').value.trim(),branch:$('#gh_branch').value.trim(),token:$('#gh_token').value.trim()}));closeOv();go('admin');toast('Saved',1)">Save</button>`);}
+async function publishDB(){const g=JSON.parse(lsGet('mc_gh')||'{}');if(!g.token)return ghSettings();
+ const api=`https://api.github.com/repos/${g.owner}/${g.repo}/contents/data.json`;const H={Authorization:'Bearer '+g.token,Accept:'application/vnd.github+json'};
+ toast('Publishing…',1);
+ try{let sha;const r0=await fetch(api+'?ref='+encodeURIComponent(g.branch)+'&t='+Date.now(),{headers:H,cache:'no-store'});
+  if(r0.ok)sha=(await r0.json()).sha;else if(r0.status!==404)throw new Error('GitHub said '+r0.status+(r0.status===401?' (check the token)':''));
+  const db=snapshotDB();const body={message:'Update app data '+new Date().toLocaleString(),content:btoa(unescape(encodeURIComponent(JSON.stringify(db)))),branch:g.branch};if(sha)body.sha=sha;
+  const r=await fetch(api,{method:'PUT',headers:{...H,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok){const j=await r.json().catch(()=>({}));throw new Error((j.message||r.status)+(r.status===403||r.status===404?' (token needs Contents: Read and write on this repo)':''));}
+  DBX.rev=db.rev;lsSet('mc_draft',JSON.stringify(db));go('admin');
+  modal('Published ✓','<p>Your changes are uploaded. Every phone will show them in about 1–2 minutes, the next time the app is opened.</p>');
+ }catch(e){modal('Publish failed',`<p style="font-size:13.5px">${esc(e.message)}</p><p style="font-size:12.5px;color:#555;margin-top:8px">Your changes are still saved on this device.</p>`);}}
+
+/* ===== Cafeteria QR pop-ups (as in the original) ===== */
+function qrSvg(seed,px){let s=(seed*9301+49297)%233280||7;const rnd=()=>(s=(s*9301+49297)%233280)/233280;const N=29,z=8;let cells='';
+ const res=(x,y)=>(x<9&&y<9)||(x>N-10&&y<9)||(x<9&&y>N-10)||(x>=N-9&&x<=N-5&&y>=N-9&&y<=N-5);
+ for(let y=0;y<N;y++)for(let x=0;x<N;x++){if(res(x,y))continue;let on=(x===6||y===6)?((x+y)%2===0):rnd()>.52;if(on)cells+=`M${x*z} ${y*z}h${z}v${z}h-${z}z`;}
+ const fin=(x,y)=>`<rect x="${x*z}" y="${y*z}" width="${7*z}" height="${7*z}"/><rect x="${(x+1)*z}" y="${(y+1)*z}" width="${5*z}" height="${5*z}" fill="#fff"/><rect x="${(x+2)*z}" y="${(y+2)*z}" width="${3*z}" height="${3*z}"/>`;
+ const al=(x,y)=>`<rect x="${x*z}" y="${y*z}" width="${5*z}" height="${5*z}"/><rect x="${(x+1)*z}" y="${(y+1)*z}" width="${3*z}" height="${3*z}" fill="#fff"/><rect x="${(x+2)*z}" y="${(y+2)*z}" width="${z}" height="${z}"/>`;
+ return `<svg xmlns="http://www.w3.org/2000/svg" width="${px}" height="${px}" viewBox="-8 -8 ${N*z+16} ${N*z+16}"><rect x="-8" y="-8" width="${N*z+16}" height="${N*z+16}" fill="#fff"/><g fill="#000"><path d="${cells}"/>${fin(0,0)}${fin(N-7,0)}${fin(0,N-7)}${al(N-9,N-9)}</g></svg>`;}
+const qrFrame=(svg)=>`<div style="border:1px solid #eee;border-radius:10px;padding:10px;width:max-content;margin:4px auto 14px;background:#fff">${svg}</div>`;
+const qrHint=(t)=>`<div style="display:flex;gap:10px;align-items:center;justify-content:center;background:#fbd9df;color:var(--accent);border-radius:8px;padding:8px 14px;margin:0 auto;width:max-content;max-width:90%;text-align:center"><span class="ms" style="font-size:20px">qr_code_scanner</span><span>${t}</span></div>`;
+function popup(title,body,foot=''){ov(`<div class="modal" style="top:12px;left:6px;right:6px;max-height:78%;border-radius:6px"><div class="mh" style="font-size:19px;align-items:flex-start;gap:10px;padding:14px 16px">${title}<span class="ms" style="cursor:pointer;font-size:26px;color:#555" onclick="closeOv()">close</span></div><div class="mb" style="background:#f7f7f8;padding:12px"><div style="background:#fff;border-radius:10px;padding:14px">${body}</div></div>${foot?`<div style="padding:10px 14px 14px">${foot}</div>`:''}</div>`);}
+showQR=function(){const ini=(ST.first[0]||'')+(ST.last[0]||'');
+ popup('Permanent QR Code',`${qrFrame(qrSvg(S.qrSeed,190))}${qrHint('Show the QR code to the cafeteria staff')}
+ <div style="border-top:2px dashed #e3e3e3;margin:16px 0 12px"></div>
+ <div class="row" style="gap:12px"><div style="width:46px;height:46px;border-radius:50%;background:#fbd9df;color:var(--accent);display:grid;place-items:center;font-size:17px;flex:none">${ini}</div>
+ <div style="flex:1;min-width:0"><div style="font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ST.first} ${ST.last}</div><div style="color:#777;font-size:13.5px">${UNI}</div></div>
+ <span class="badge b-ok" style="border-radius:14px;padding:4px 10px;white-space:nowrap"><span class="ms" style="font-size:16px">all_inclusive</span> Reusable</span></div>`,
+ `<button class="btn-acc row" style="width:100%;justify-content:center;gap:8px;padding:11px" onclick="dlQR()"><span class="ms" style="font-size:20px">download</span>Download</button>`);};
+function dlQR(){const svg=qrSvg(S.qrSeed,600);const img=new Image();img.onload=()=>{const c=document.createElement('canvas');c.width=c.height=600;const x=c.getContext('2d');x.drawImage(img,0,0);
+ c.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='cafeteria-qr.png';document.body.appendChild(a);a.click();a.remove();toast('QR code downloaded',1);});};
+ img.onerror=()=>toast('Download not available here');img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);}
+const MEAL_IMG=`<svg viewBox="0 0 190 130" width="100%" height="100%" preserveAspectRatio="xMidYMin slice" fill="#68768a"><path d="M30 -20a10 10 0 0 1 20 0v60h10V-20a10 10 0 0 1 20 0v60h10V-20a10 10 0 0 1 20 0v70c0 22-14 38-30 42v68a10 10 0 0 1-20 0v-68c-16-4-30-20-30-42z"/><ellipse cx="148" cy="22" rx="30" ry="56"/><rect x="140" y="60" width="16" height="92" rx="8"/></svg>`;
+serveMeal=function(n){const m=mealsFor(TODAY).find(x=>x[0]===n);if(!m)return;const day=DAY[TODAY.getDay()];
+ const items=m[2].filter(x=>x&&x.trim()).map((x,i)=>i===0?x.replace(/^[A-Za-z]+\([A-Za-z]{3}\)-?/,''):x).filter(x=>x.trim());
+ const adminBtn=S.isAdmin?`<button class="btn-acc" style="width:100%;padding:10px" onclick="adminServe('${n}')">Admin: mark as served now</button>`:'';
+ popup(`${n} ${m[1]}`,`${qrFrame(qrSvg(S.qrSeed*31+n.length,190))}${qrHint('Show QR code to mess staff')}
+ <div style="border-top:2px dashed #e3e3e3;margin:16px 0 12px"></div>
+ <div style="position:relative;height:180px;border-radius:10px;overflow:hidden;background:#eef0f3">${MEAL_IMG}
+  <span style="position:absolute;left:12px;top:12px;background:#fff;color:#64b5f6;border-radius:14px;padding:4px 12px;font-size:13.5px">● ${day}</span>
+  <div style="position:absolute;left:0;right:0;bottom:0;padding:24px 12px 10px;background:linear-gradient(transparent,rgba(0,0,0,.55));color:#fff;font-size:14px" class="row"><span class="ms" style="font-size:18px;margin-right:6px">schedule</span>${n} ${m[1]}</div></div>
+ <div style="color:#777;margin:14px 0 6px;letter-spacing:.5px">MENU</div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 14px">${items.map(x=>`<div style="display:flex;gap:8px;align-items:center"><span style="width:6px;height:6px;border-radius:50%;background:#90caf9;flex:none"></span><span>${x}</span></div>`).join('')}</div>`,adminBtn);};
+function adminServe(n){const d=new Date();DBX.served=DBX.served||{};DBX.served[fmt(TODAY)+'|'+n]=`${pad(d.getHours()%12||12)}:${pad(d.getMinutes())} ${d.getHours()<12?'AM':'PM'}`;saveDraft();closeOv();go('cafeteria');toast(`${n} marked as served`,1);}
+
+/* ===== Real cafeteria QR image (changeable in Admin > Cafeteria) ===== */
+const QR_DEFAULT='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATwAAAE8AQAAAAB1fjCrAAAF2klEQVR42u2bTY7jyBGFvxBppIBepG5A3aBvUGSdxBcpSKnCXMvoLJ9g5gapZe8owIukh+LzIkmVqro9GAPeUDZXopigEIzk+4kImfhTx2XDnzz+VxeamdkeOF131LAZLMCpvnTX7VsY9iczs91jRY0qSbkJTlLfjn7eTe3oIwDNSdLo+0fbFBer4cD5WPtYwwjH7J/duTtKIzCYLXecAIiffyPcn6wk1z2Wm1PG5ly7ZNKEj9BOTqcMH3P9AVwMgLReAKh5qy/GsNf2UoI5hx8WHmgCPgIHgJ6qb6VoeXW5rnJzyjuqniUYqH2sMiadRqzk2msE3K9PwOgjThNeGSghV5pWletc9mp/d2H8tJ83XM1sB0P7PHyN81Zwv3VfzkdowrDHzOrV7fBuBPKMWAKm7YdNUY6JZqoUqx6cJpeAdnS6Hf2DURxgGVN6qhSXreBLqFjmUKW2eriopWiSpDDSVtIEptRWPVI8uGTZ6/GiXsCuCfhYKZrSMTche0ELjZTafy9nemqAFFZGcdddY1LgrEw7Xo4zk9WXTkqmt82wX+64L9difcfltl5lP+xfoauhhpPt2e7eAJm9Dnttucdwy838YF5ALkUpTvACVAorQrM9tKcM7NoNbQBcbwXaJsD14HtUKVI0XVF7pmRKbaU4Ok1OJ60W9jIBVKA9LAp98TOxuJZQSdAoc3AJ9W2BhuMfAsAKYK8QWCH2yO5d2SvhEiOtJFOyTFsoXnpQsB99fAFoJMURjrmZnISfiZ0q8WjeFUmxJJVC7JJOmbZsjYPTSXq4XG+42l/t+x5oq8Sww2yP07Okv/TNK+e/bXkbdjPFzap398OvhVkjr0nOFAyveqCV0lEKwFEanSZ4+lmu70z6rU5haxLsRbPjeqANYCXqmzDr8D0aaQuxvxevbEF+yklkHQBAEahY5lgt3tVUbNp80rMEUx7Ht6VO0UwsAHCUAn1b9asuVOqW65nl0ZxUV7a2j4dyMnpV0qmUKlYK9sWxz8T+A8WZFFxqpaji2KFdPjXK/uEc+4YaGPaWm281XHccOAenZ2uk7/tXeOXygKX48QZzs2MvucZH9c2c6wcUca7AdnoCFuT2xbFTqq6zYN/+9Ab1OkVcjymCVy6CvW+U/QTg4lHpqboXcXvYLYFuPzr2bn2Ofe6+1EMHZyuOnaGzLX+/ml3v3mv3K/hITgX5YyWpb6B5zjCu6b3Ohbl27YZ2/r7q24kmzNpsYS6nCVDinz4uZAcTHDNUmlZK7Plduv308TRSaiWNNMpY9pJiJQWaUK25A3lrG30idnw0JdxSnsUly7TjXIpPR6VWD1iUluXmdCvFl0egSqr6JoBlvxbB/h8BQItLx5tjBw5uJnoOTqF6xFyXSpyU2hK49WXMQDIJmqDE51zvgPRO9MWx28qaTS9OwSUqCSfc4thffDSlJ/fTXN9rm5BvvbwVEfsvpcdQX7qbd+uAeib2fSH2pf3WhMLgpS3dVopV34w0HT6sSbDPDZV7xy5gQ7Pgve+RpNGlAzxViu9zNcDMd0qsS9mnn10LH2ZGNHqNNIFmKk3Ho1SmiebWRLgp+zVEncvq3j5X46elpzYvHOykN+VLN/p4tU62h7N9OXe/bxtdTEq4nofrsbel09JKcSzVGXzAR82vho8PKWcknXIToK36ZnKa8KHqGSmOnQecLFgALB2YX+V0qGZij5abU/afBHv8bNc36xyU7Is5odVcfW/CSDv6+FJyfYt6C6C7WPvZDGzW1mMfrIbXkrh66Bhsw+65hl+GbsPZtli5WIqYLu3xsV4cO9VI3X+dazprGxm87sE67favwHX/di2lCoDL8/102NiE4thPSsd/9HEuxefmlHla3aBkD/1Hxx7u9/MyRxqAQvHFsYeqbwsasE4/M9597u4c+25e6DUBTuHLuat9wmlyvx2B37ccL23Ax+uOh+u7mm1hsG8jb1xsw3kzfH0emlh97+TfNJ5XOCj5x4f9/z8V/5WF/wJnxvlMdWjlpQAAAABJRU5ErkJggg==';
+const _qrSvgGen=qrSvg;
+qrSvg=function(seed,px){const src=(DBX.qr)||QR_DEFAULT;return `<img src="${src}" width="${px}" height="${px}" style="display:block;image-rendering:pixelated" alt="QR code">`;};
+dlQR=function(){const a=document.createElement('a');a.href=DBX.qr||QR_DEFAULT;a.download='cafeteria-qr.png';document.body.appendChild(a);a.click();a.remove();toast('QR code downloaded',1);};
+const _adCafe=PAGES.ad_cafe;
+PAGES.ad_cafe=()=>_adCafe()+`<div class="card" style="padding:12px"><div style="font-weight:600;margin-bottom:6px">Cafeteria QR code</div><div class="row" style="gap:12px"><img src="${DBX.qr||QR_DEFAULT}" width="90" height="90" style="image-rendering:pixelated;border:1px solid #eee"><div style="flex:1"><label class="btn-ghost" style="cursor:pointer;display:inline-block">Change QR image<input type="file" accept="image/*" hidden onchange="setQR(this)"></label>${DBX.qr?'<br><button class="link" style="margin-top:8px" onclick="DBX.qr=null;saveDraft();go(\'ad_cafe\')">Use original QR</button>':''}</div></div></div>`;
+function setQR(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{DBX.qr=r.result;saveDraft();go('ad_cafe');toast('QR updated',1);};r.readAsDataURL(f);}
+const _snap=snapshotDB;snapshotDB=function(){const d=_snap();if(DBX.qr)d.qr=DBX.qr;return d;};
+const _apply=applyDB;applyDB=function(db){_apply(db);if(db)DBX.qr=db.qr||null;};
+
+/* ===== Leave approvals (parent) – every pass carries a DEMO mark ===== */
+const DEMO_RIB=`<div style="background:#fff3cd;border:1px dashed #b8860b;color:#8a6100;border-radius:6px;padding:6px 10px;margin-bottom:10px;font-size:12.5px;text-align:center;font-weight:600;letter-spacing:.3px">DEMO – not valid for gate exit</div>`;
+const nowStamp=()=>{const n=new Date();return `${pad(n.getDate())}-${pad(n.getMonth()+1)}-${n.getFullYear()}, ${pad(n.getHours()%12||12)}:${pad(n.getMinutes())} ${n.getHours()<12?'AM':'PM'}`;};
+const lvBadge2=s=>s==='Approved'||s==='Completed'?'b-ok':s==='Cancelled'?'b-warn':s==='Rejected'?'b-bad':'';
+function stepsFor(l){const parentName=ST.parentAcc||'AMIT GAUTAM';const sub=l.t1||l.from.replace(/-([A-Za-z]{3})-/,(m,mm)=>'-'+pad(MON.indexOf(mm)+1)+'-');
+ let p=null,pState='pending';
+ if(l.pRej){p=`Rejected on ${l.pRej} By ${parentName}`;pState='rej';}
+ else if(l.t2){p=`Approved on ${l.t2} By ${parentName}`;pState='ok';}
+ else if(l.status!=='Submitted'&&l.status!=='Rejected'){p='Approved';pState='ok';}
+ const st=[['Submitted',sub,'ok'],['Parent approval',p,pState]];
+ if(l.type!=='Day Out Pass'){let w=null,ws='pending';if(l.t3){w=`Approved on ${l.t3}`;ws='ok';}else if(l.status==='Approved'||l.status==='Completed'){w='Approved';ws='ok';}else if(l.status==='Cancelled'&&pState==='ok'){w='Cancelled';ws='rej';}st.push(['Warden approval',w,ws]);}
+ return st;}
+viewLeave=function(i,scroll){const l=LEAVES[i];const can=l.status==='Approved'||l.status==='Submitted';const pending=l.status==='Submitted'&&!l.t2&&!l.pRej;
+ const steps=stepsFor(l);const cols=steps.length;
+ modal(l.type,`${DEMO_RIB}<div style="font-size:15px;margin-bottom:8px">${l.type}</div>
+ ${pending?`<div class="row" style="gap:8px;margin-bottom:8px"><button class="btn-ghost" onclick="askApprove(${i},true)">Approve</button><button class="btn-ghost" onclick="askApprove(${i},false)">Reject</button></div>`:''}
+ <div class="row" style="gap:10px;margin-bottom:6px"><span class="badge ${lvBadge2(l.status)}" style="font-size:14px;padding:4px 10px">${l.status}</span>${can?`<button class="btn-ghost" onclick="cancelLeave(${i})">Cancel</button>`:''}</div>
+ ${[['From Date',l.from],['To Date',l.to],['Reason',l.reason]].map(([k,v])=>`<div class="pl" style="padding:6px 0;grid-template-columns:30% 12px 1fr"><span style="font-size:12.5px">${k.toUpperCase()}</span><span>:</span><span>${v}</span></div>`).join('')}
+ <div style="margin-top:8px">ATTACHMENT</div>${l.att?`<span class="link" style="font-size:12.5px">${l.att}</span>${l.img?`<img src="${l.img}" style="width:100%;margin-top:8px;border-radius:6px">`:`<div style="height:150px;margin-top:8px;border-radius:6px;background:#eceae6;display:grid;place-items:center;color:#999"><span class="ms" style="font-size:44px">image</span></div>`}`:'<div style="color:#888;font-size:13px">No attachment</div>'}
+ <div id="tl" style="display:grid;grid-template-columns:repeat(${cols},1fr);margin-top:16px;position:relative;text-align:center;font-size:12.5px;color:var(--blue)"><div style="position:absolute;top:16px;left:${50/cols}%;right:${50/cols}%;height:3px;background:var(--blue)"></div>${steps.map(([n,t,s])=>`<div style="position:relative"><div style="width:34px;height:34px;border-radius:50%;margin:0 auto 6px;display:grid;place-items:center;background:${s==='ok'?'var(--blue)':s==='rej'?'var(--bad)':'#cfd8dc'};color:#fff"><span class="ms" style="font-size:20px">${s==='ok'?'check':s==='rej'?'close':'more_horiz'}</span></div><span style="color:${s==='rej'?'var(--bad)':s==='pending'?'#888':'var(--blue)'}">${n}<br>${t||'Pending'}</span></div>`).join('')}</div>`);
+ if(scroll)setTimeout(()=>{const t=document.getElementById('tl');t&&t.scrollIntoView({block:'center'})},50);};
+function askApprove(i,ok){const l=LEAVES[i];const kind=l.type.toLowerCase().replace('day out','day out').replace(' pass',' pass');
+ ov(`<div class="modal" style="top:14px;left:10px;right:10px"><div class="mh" style="font-size:19px">${ok?'Approve gate pass':'Reject Gate pass'}<span class="ms" style="cursor:pointer" onclick="viewLeave(${i})">close</span></div><div class="mb">
+ <p style="font-size:15px;line-height:1.5">Are you sure you want to ${ok?'approve':'reject'} ${kind} for ${ST.name} for ${l.from} to ${l.to}</p>
+ <div class="row" style="justify-content:flex-end;gap:10px;margin-top:16px"><button class="btn-ghost" onclick="viewLeave(${i})">CANCEL</button><button class="btn-acc" onclick="doApprove(${i},${ok})">${ok?'Approve':'Reject'}</button></div></div></div>`);}
+function doApprove(i,ok){const l=LEAVES[i];if(ok){l.t2=nowStamp();if(l.type==='Day Out Pass')l.status='Approved';}else{l.pRej=nowStamp();l.status='Rejected';}
+ if(typeof saveDraft==='function'&&S.isAdmin)saveDraft();
+ go('leave');statusToast();viewLeave(i);}
+function statusToast(){const t=document.createElement('div');t.className='toast ok';t.innerHTML=`<span class="ms" style="color:var(--ok)">check_circle</span><div>Status Update Successfully</div><span class="ms x">close</span>`;t.querySelector('.x').onclick=()=>t.remove();$('#toasts').appendChild(t);setTimeout(()=>t.remove(),3000);}
+leaveActions=function(i){window._li=i;sheet('Actions',`<div class="opt" onclick="viewLeave(_li,1)">Status</div>`);};
+// small DEMO tag next to each status in the list
+const _pageLeave=PAGES.leave;PAGES.leave=()=>_pageLeave().replace(/(<span class="badge [^"]*"[^>]*>(?:Approved|Submitted|Completed|Cancelled|Rejected)<\/span>)/g,'$1 <span class="badge" style="background:#fff3cd;color:#8a6100;font-size:10.5px;margin-left:4px">DEMO</span>');
+
 applySet();
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 </script>
