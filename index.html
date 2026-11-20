@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#8d1b3d">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>myCampus – Northwind University</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700&family=Lato:wght@400;700&family=Lexend:wght@400;600&family=Atkinson+Hyperlegible:wght@400;700&family=Tajawal:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0&display=block">
+<style>
+:root{
+  --accent:#8d1b3d; --accent-d:#6e1430; --bg:#fde6ea; --bg2:#fbd9df; --chip:#f8cfd7;
+  --blue:#1e88e5; --text:#1d1d1f; --muted:#666; --line:#ececec; --ok:#2e7d32; --okbg:#e3f4e4;
+  --bad:#d32f2f; --badbg:#fde3e3; --font:'Mulish',sans-serif; --fs:1; --lh:1.35; --ls:0px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#2b2b2e}
+@media (max-width:500px){html,body{background:#fff}}
+body{font-family:var(--font);color:var(--text);display:flex;justify-content:center;font-size:calc(14px*var(--fs));line-height:var(--lh);letter-spacing:var(--ls)}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit;letter-spacing:inherit}
+button{cursor:pointer;border:none;background:none}
+.ms{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;font-size:22px;line-height:1;display:inline-block;white-space:nowrap;direction:ltr;-webkit-font-smoothing:antialiased;user-select:none;vertical-align:middle}
+.fill{font-variation-settings:'FILL' 1}
+#phone{width:100%;max-width:430px;height:100%;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.hidden{display:none!important}
+
+/* ---------- LOGIN ---------- */
+#login{flex:1;overflow:auto;background:#fff}
+.lg-top{background:#f6f7fb;padding:22px 0 18px;text-align:center}
+.mc-logo{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:24px;color:#1f3b5c}
+.mc-logo svg{width:34px;height:34px}
+.lg-body{padding:22px 30px 30px}
+.uni-logo{display:flex;justify-content:center;margin-bottom:6px}
+.lg-uni{text-align:center;font-size:20px;margin:4px 0 6px}
+.link{color:var(--blue);text-decoration:underline;cursor:pointer;background:none}
+.lg-center{text-align:center}
+.fld{margin-top:20px}
+.fld label{display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px}
+.inp{width:100%;border:1px solid #cfd3d8;border-radius:4px;padding:11px 12px;outline:none;background:#fff}
+.inp:focus{border:2px solid var(--blue);padding:10px 11px}
+.pw{position:relative}.pw .ms{position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:#333}
+.btn-blue{width:100%;background:var(--blue);color:#fff;border-radius:24px;padding:12px;margin-top:24px;font-weight:600;font-size:15px}
+.or{display:flex;align-items:center;gap:14px;margin:24px 0;color:#333}.or:before,.or:after{content:'';flex:1;height:1px;background:#e0e0e0}
+.ms-btn{display:flex;align-items:center;gap:10px;margin:0 auto;border:1px solid #ddd;border-radius:24px;padding:9px 18px;background:#fff}
+.mslogo{display:grid;grid-template-columns:8px 8px;gap:1px}.mslogo i{width:8px;height:8px;display:block}
+.terms{text-align:center;font-size:14px;margin-top:26px;color:#333;line-height:1.6}
+.err{color:var(--bad);font-size:12px;margin-top:6px}
+
+/* ---------- APP SHELL ---------- */
+#app{flex:1;display:flex;flex-direction:column;min-height:0;background:var(--bg)}
+.hdr{height:52px;background:#fff;display:flex;align-items:center;padding:0 10px;gap:10px;position:relative;z-index:5;border-bottom:1px solid #f1f1f1}
+.hdr .title{flex:1;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr .ms{font-size:26px;color:#333;cursor:pointer}
+.parent-pill{position:absolute;left:50%;top:6px;transform:translateX(-8%);background:var(--blue);color:#fff;border-radius:0 0 14px 14px;padding:5px 14px;font-size:15px;z-index:6;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.pstrip{background:#fff;display:flex;gap:12px;align-items:center;padding:8px 10px 10px;border-bottom:1px solid #f0f0f0}
+.av{width:44px;height:44px;border-radius:50%;overflow:hidden;flex:none;background:#e8e2dc}
+.pstrip .n{font-size:15px;text-transform:uppercase}
+.pstrip .s{font-size:13px;color:#444}
+#content{flex:1;overflow:auto;position:relative}
+.ptitle{font-size:17px;padding:12px 10px 6px;background:var(--bg)}
+.psub{font-size:12px;color:#444;padding:0 10px 6px}
+.nav{height:56px;background:#fff;display:flex;border-top:1px solid #eee;z-index:5}
+.nav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;color:#444;gap:2px}
+.nav button.on{color:var(--blue)}
+.pad{padding:10px}
+.card{background:#fff;border-radius:8px;margin:8px 10px;overflow:hidden}
+.empty{display:flex;gap:10px;align-items:center;background:var(--bg2);border-radius:4px;margin:10px;padding:12px;font-size:14px}
+.empty .ms{font-size:20px;color:#555}
+.btn-acc{background:var(--accent);color:#fff;border-radius:4px;padding:8px 16px;font-weight:600}
+.btn-acc:active{background:var(--accent-d)}
+.btn-ghost{background:#f2f2f2;border:1px solid #ddd;border-radius:4px;padding:6px 12px;font-size:13px}
+.sel{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #ddd;border-radius:20px;padding:7px 12px;font-size:13px;margin:6px 10px;cursor:pointer}
+.sel.sq{border-radius:4px;display:flex;justify-content:space-between}
+.tabs{display:flex;gap:18px;padding:0 10px;border-bottom:1px solid #e9e9e9}
+.tabs button{padding:8px 0;font-size:14px;color:#888;border-bottom:2px solid transparent}
+.tabs button.on{color:#111;border-color:#111}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:9px 10px;border-bottom:1px solid #f1f1f1;font-size:13.5px}
+.kv .k{text-transform:uppercase;color:#333;flex:0 0 45%}
+.kv .v{text-align:right}
+.badge{display:inline-block;border-radius:4px;padding:2px 8px;font-size:12.5px}
+.b-ok{background:var(--okbg);color:var(--ok)}.b-bad{background:var(--badbg);color:var(--bad)}.b-warn{background:#fff3cd;color:#b8860b}.b-pink{background:var(--chip);color:var(--accent)}
+.row{display:flex;align-items:center}
+.search{display:flex;align-items:center;gap:6px;border:1px solid #ddd;border-radius:20px;padding:6px 12px;background:#fff;margin:8px 10px}
+.search input{border:none;outline:none;flex:1;background:none}
+.toastwrap{position:absolute;top:58px;left:40px;right:30px;z-index:60;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.toast{pointer-events:auto;background:#fff;border-radius:6px;box-shadow:0 2px 10px rgba(0,0,0,.18);padding:10px 12px;display:flex;gap:10px;align-items:flex-start;font-size:13.5px;animation:tin .25s}
+.toast .ms{color:var(--bad);font-size:20px}.toast.ok .ms{color:var(--ok)}
+.toast .x{margin-left:auto;color:#333;cursor:pointer;font-size:18px}
+@keyframes tin{from{opacity:0;transform:translateY(-8px)}}
+
+/* drawer */
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:30;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.drawer{position:absolute;top:0;bottom:0;left:0;width:78%;background:var(--bg);z-index:31;display:flex;flex-direction:column;animation:slin .22s}
+@keyframes slin{from{transform:translateX(-100%)}}
+.drawer .dh{background:#fff;height:52px;display:flex;align-items:center;gap:14px;padding:0 12px;font-size:17px}
+.drawer .ds{padding:12px 10px}.drawer .ds input{width:100%;padding:9px 10px;border:1px solid #ddd;border-radius:3px;background:#fff;outline:none}
+.drawer ul{list-style:none;overflow:auto;flex:1;padding-bottom:20px}
+.drawer li{display:flex;align-items:center;gap:12px;padding:8px 16px;font-size:14.5px;cursor:pointer;border-left:3px solid transparent}
+.drawer li .ms{font-size:20px;color:var(--accent)}
+.drawer li.on{background:#eefbea;border-left-color:var(--accent)}
+.drawer li.sub{padding-left:28px;font-size:16px}
+/* sheets & modals */
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:16px 16px 0 0;z-index:41;max-height:80%;display:flex;flex-direction:column;animation:sup .22s}
+@keyframes sup{from{transform:translateY(100%)}}
+.sheet .grab{width:40px;height:4px;border-radius:2px;background:#ccc;margin:8px auto}
+.sheet .sh{display:flex;justify-content:space-between;align-items:center;padding:6px 14px 10px;font-size:17px}
+.sheet .sb{overflow:auto;padding:0 14px}
+.sheet .sf{display:flex;gap:10px;padding:12px 14px;border-top:1px solid #eee}
+.sheet .sf button{flex:1;padding:10px;border-radius:4px}
+.opt{padding:12px 4px;border-bottom:1px solid #f2f2f2;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.opt.on{color:var(--blue);background:#eef6fd}
+.modal{position:absolute;left:12px;right:12px;top:8%;max-height:80%;background:#fff;border-radius:8px;z-index:41;display:flex;flex-direction:column;animation:fade .2s;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.modal .mh{display:flex;justify-content:space-between;align-items:center;padding:14px;font-size:18px;border-bottom:1px solid #eee}
+.modal .mb{overflow:auto;padding:14px}
+.formrow{margin-bottom:12px}.formrow label{display:block;font-size:13px;margin-bottom:4px;color:#333}
+.formrow .inp{padding:9px 10px}
+/* profile */
+.prof-photo{width:96px;height:124px;border:2px solid var(--accent);border-radius:6px;overflow:hidden;margin:10px;background:#e8e2dc}
+.prof-name{font-size:21px;padding:0 10px 8px}
+.pl{display:grid;grid-template-columns:42% 12px 1fr;padding:5px 10px;font-size:14px}
+/* institution */
+.vm{display:flex;align-items:center;gap:14px;padding:12px 14px;cursor:pointer}
+.vm .ic{width:30px;height:30px;border-radius:50%;background:var(--chip);display:grid;place-items:center;color:var(--accent)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 10px}
+.tile{background:#fff;border-radius:6px;padding:12px;display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:13px;text-transform:uppercase}
+.tile .ms{font-size:20px;border-radius:50%;padding:4px}
+/* attendance */
+.bars{padding:10px 10px 6px 0}
+.bar-row{display:flex;align-items:center;height:42px}
+.bar-row .lbl{width:92px;text-align:right;font-size:11.5px;color:#555;padding-right:8px}
+.bar-track{flex:1;position:relative;height:100%;border-left:1px solid #ddd}
+.bar{position:absolute;top:10px;height:22px;left:0;border-radius:0 2px 2px 0;transition:width .6s}
+.axis{display:flex;justify-content:space-between;margin-left:92px;font-size:11px;color:#555;padding-top:4px}
+.radio{display:inline-flex;align-items:center;gap:6px;margin-right:18px;cursor:pointer}
+.radio i{width:16px;height:16px;border:2px solid #999;border-radius:50%;display:inline-block;position:relative}
+.radio.on i{border-color:var(--accent)}.radio.on i:after{content:'';position:absolute;inset:2px;border-radius:50%;background:var(--accent)}
+.donut{display:block;margin:10px auto}
+.legend{display:flex;gap:14px;justify-content:flex-end;font-size:12.5px;padding:6px 10px}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+/* holidays */
+.hol{padding:10px;border-bottom:1px solid #f0f0f0}
+.hol .t{font-size:14.5px}.hol .d{font-size:12.5px;color:#444;margin:2px 0 4px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:6px 10px;text-align:center;font-size:12.5px}
+.cal div{padding:8px 0;border-radius:4px}
+.cal .h{font-weight:700;color:#666}.cal .hd{background:var(--accent);color:#fff}.cal .td{outline:2px solid var(--blue)}
+/* cafe */
+.qr{background:#fff7d6;margin:8px 10px;border-radius:6px;padding:12px}
+.meal{background:#fff;margin:10px;border-radius:8px;padding:12px;font-size:13.5px}
+.meal .icon{display:flex;justify-content:center;color:#5f6675;padding:6px 0 10px}
+/* timetable */
+.cls{padding:10px;border-bottom:1px solid #f0d6dc;font-size:13.5px}
+.cls .c{font-size:14px}
+/* misc */
+.sum3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px}
+.sum3 div{background:#fff;border:1px solid #eee;border-radius:6px;text-align:center;padding:12px 4px;font-size:12px}
+.sum3 b{display:block;font-size:17px;font-weight:600;margin-bottom:4px}
+.pager{display:flex;justify-content:center;gap:8px;padding:10px;align-items:center;flex-wrap:wrap;font-size:13px}
+.pager button{border:1px solid #ddd;padding:6px 12px;border-radius:4px;background:#f6f6f6}
+.pager button.pri{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pager button:disabled{opacity:.45}
+.res-head{display:flex;justify-content:space-between;align-items:center;padding:12px 10px;background:#fff;margin:8px 10px;border-radius:6px;font-size:13.5px;gap:10px}
+.dots{border:1px solid #ddd;border-radius:4px;padding:0 8px;font-weight:700;letter-spacing:1px}
+/* panels */
+.panel{position:absolute;left:10px;right:10px;top:70px;bottom:62px;background:#fff;border-radius:12px;z-index:41;display:flex;flex-direction:column;box-shadow:0 8px 30px rgba(0,0,0,.25);animation:fade .2s}
+.panel .ph{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #eee;font-size:20px}
+.panel .pb{overflow:auto;padding:12px 14px;flex:1}
+.sec{font-size:15px;letter-spacing:.5px;margin:14px 0 8px;text-transform:uppercase}
+.slider{border:1px solid #eee;border-radius:8px;padding:10px;margin-bottom:8px}
+.slider .top{display:flex;align-items:center;gap:8px;font-size:15px}.slider .top span:last-child{margin-left:auto;font-size:12px;color:#666}
+.slider input{width:100%;accent-color:var(--blue);margin-top:8px}
+.agrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ab{border:1px solid #eee;border-radius:8px;padding:14px 6px;text-align:center;font-size:13.5px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.ab.on{border-color:var(--blue);background:#e9f3fe;color:var(--blue)}
+.side{position:absolute;top:0;bottom:0;right:0;width:82%;background:#f4f4f4;z-index:41;display:flex;flex-direction:column;animation:srin .22s}
+@keyframes srin{from{transform:translateX(100%)}}
+.side .ph{display:flex;align-items:center;gap:12px;padding:14px;background:#fff;font-size:18px}
+.side .pb{overflow:auto;padding:10px;flex:1}
+.sbox{background:#fff;border-radius:6px;padding:12px;margin-bottom:10px;font-size:13.5px}
+.sbox h4{font-weight:600;font-size:14.5px}.sbox p{color:#555;font-size:12.5px;margin-bottom:8px}
+.themes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.theme{text-align:center;font-size:13px;cursor:pointer}
+.theme .sw{height:56px;border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:5px;justify-content:center;border:3px solid transparent}
+.theme.on .sw{border-color:#111}
+.theme .sw i{display:block;height:4px;border-radius:2px;background:rgba(255,255,255,.85)}
+.switch{width:38px;height:20px;border-radius:10px;background:#ccc;position:relative;cursor:pointer;display:inline-block;vertical-align:middle}
+.switch:after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2px;left:2px;transition:.2s}
+.switch.on{background:var(--blue)}.switch.on:after{left:20px}
+.apps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px}
+.apps button{background:#fff;border-radius:10px;padding:14px 4px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px}
+.apps .ms{color:var(--accent);font-size:26px}
+
+/* accessibility effects */
+body.a-readable{--font:'Atkinson Hyperlegible',sans-serif}
+body.a-dys{--font:'Lexend',sans-serif;--ls:.5px}
+body.a-shadow #phone{text-shadow:0 1px 2px rgba(0,0,0,.35)}
+body.a-hideimg .av,body.a-hideimg .prof-photo,body.a-hideimg .uni-logo{visibility:hidden}
+body.a-bigcursor,body.a-bigcursor *{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M4 2l26 16-12 2-6 12z' fill='black' stroke='white' stroke-width='2'/%3E%3C/svg%3E") 4 2,auto!important}
+body.a-links a,body.a-links .link{background:#ff0;color:#000!important;outline:2px solid #000}
+body.a-heads .ptitle,body.a-heads .prof-name,body.a-heads .sec{outline:2px dashed var(--blue);outline-offset:-2px}
+body.a-focus *:focus{outline:3px solid #ff9800!important;outline-offset:2px}
+body.a-bigbtn button{min-height:40px}
+body.a-noanim *{animation:none!important;transition:none!important}
+#guide{position:fixed;left:0;right:0;height:10px;background:rgba(30,136,229,.45);pointer-events:none;z-index:999;display:none}
+#mask{position:fixed;left:0;right:0;pointer-events:none;z-index:998;display:none;box-shadow:0 0 0 9999px rgba(0,0,0,.6);height:80px}
+body.rtl #phone{direction:rtl}
+</style>
+</head>
+<body>
+<div id="phone">
+  <!-- LOGIN -->
+  <div id="login">
+    <div class="lg-top"><span class="mc-logo">
+      <svg viewBox="0 0 40 40"><rect x="3" y="3" width="34" height="34" rx="9" fill="#2a9df4"/><path d="M11 27V14l5 7 5-7v13M24 20.5a5 5 0 0 1 8-2.5M32 25a5 5 0 0 1-8-2.5" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      myCampus</span></div>
+    <div class="lg-body">
+      <div class="uni-logo" id="uniLogoBig"></div>
+      <div class="lg-uni">Northwind University</div>
+      <div class="lg-center"><button class="link" onclick="openUniPicker()">Not from Northwind University?</button></div>
+      <form onsubmit="return doLogin(event)">
+        <div class="fld"><label>Username</label><input class="inp" id="lgUser" autocomplete="off" placeholder=""></div>
+        <div class="fld"><label>Password <button type="button" class="link" onclick="forgotPw()">Forgot Password?</button></label>
+          <div class="pw"><input class="inp" id="lgPass" type="password" autocomplete="off"><span class="ms" onclick="togglePw(this)">visibility</span></div>
+          <div class="err hidden" id="lgErr">Please enter username and password</div></div>
+        <button class="btn-blue" type="submit">Login</button>
+      </form>
+      <div class="or">OR</div>
+      <button class="ms-btn" onclick="enterApp()"><span class="mslogo"><i style="background:#f25022"></i><i style="background:#7fba00"></i><i style="background:#00a4ef"></i><i style="background:#ffb900"></i></span>Login with Institution Email</button>
+      <div class="lg-center" style="margin-top:22px"><button class="link" onclick="createAcc()">Create an account</button></div>
+      <div class="terms">By logging in, you agree to our <span class="link" onclick="termsModal()">Terms of Use</span> and to receive myCampus emails &amp; updates and acknowledge that you read our <span class="link" onclick="termsModal()">Privacy Policy</span>.</div>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="app" class="hidden">
+    <div class="hdr">
+      <span class="ms" onclick="openDrawer()">menu</span>
+      <div class="title">Northwind University</div>
+      <button class="parent-pill" onclick="parentLogin()">Parent Login</button>
+      <span class="ms fill" onclick="go('profile')">account_circle</span>
+      <span class="ms" onclick="confirmLogout()">logout</span>
+    </div>
+    <div id="pstrip"></div>
+    <div id="content"></div>
+    <div class="nav">
+      <button id="nvApps" onclick="go('apps')"><span class="ms">apps</span>Apps</button>
+      <button id="nvAcc" onclick="openAccess()"><span class="ms">accessibility_new</span>Accessibility</button>
+      <button id="nvSet" onclick="openSettings()"><span class="ms">settings</span>Settings</button>
+    </div>
+  </div>
+  <div id="overlay"></div>
+  <div class="toastwrap" id="toasts"></div>
+</div>
+<div id="guide"></div><div id="mask"></div>
+
+<script>
+/* ================= DATA ================= */
+const UNI='Northwind University';
+const ST={name:'ILARIKA GAUTAM',status:'Active',adm:'5591',admYear:'2025-2026',roll:'S25CSEU0122',degree:'Undergraduate',
+ dept:'School of Computer Science Engineering & Technology',sem:'Semester - 3',course:'Bachelor of Technology (Computer Science and Engineering)',
+ college:UNI,plan:'B.Tech CSE DevOps 2025-26',validity:'30-06-2029',first:'ILARIKA',last:'GAUTAM',dob:'01-01-2007',gender:'Female',
+ father:'PARENT NAME 1',mother:'PARENT NAME 2',address:'123, DEMO STREET, SAMPLE NAGAR, New Delhi, IN',city:'New Delhi',state:'Delhi',email:'student@northwind.edu',phone:'+91 98XXXXXX10'};
+const SEMSEL='2026-2027, Semester - 3, B.Tech.(CSE)';
+const SUBJ=[
+ {code:'2025CSET200',name:'Probability and Statistics',pct:66},
+ {code:'2025CSET201',name:'Data Structures using C++',pct:51},
+ {code:'2025CSET205',name:'Database Management Systems',pct:43},
+ {code:'CSET203',name:'Microprocessors and Computer Architecture',pct:68},
+ {code:'CSET217',name:'Software Development with DevOps',pct:100}];
+function mkLog(i){
+ const base=[['05-Nov-2026','15:55 - 16:55','Absent (On Duty Submitted)'],['04-Nov-2026','14:50 - 15:50','Present'],['02-Nov-2026','13:45 - 14:45','Present'],['02-Nov-2026','12:40 - 13:40','Present'],
+ ['29-Oct-2026','15:55 - 16:55','Absent'],['28-Oct-2026','14:50 - 15:50','Absent'],['22-Oct-2026','15:55 - 16:55','Present'],['15-Oct-2026','15:55 - 16:55','Absent'],['08-Oct-2026','14:50 - 15:50','Present']];
+ if(i===4) return base.map(b=>[b[0],b[1],'Present']);
+ return base.filter((b,k)=>(k+i)%5!==3);
+}
+const MSGS=[{from:'Udit Mangal',date:'06-Jul-2026, 06:28 PM',title:'Odd Semester Registration Guidelines',
+ body:`Dear Student,<br>Greetings from ${UNI}!<br>This is to inform you that online registration of returning students for the Odd Semester AY 2026-27 shall be open as per the schedule below:<br>o&nbsp; 2nd Year: 4th August 2026<br>o&nbsp; 3rd Year: 5th August 2026<br>o&nbsp; 4th Year: 6th August 2026<br>Students are requested to complete fee payment before registration. Registration will be done through the student portal using your login credentials. For any queries, contact the Registrar Office.<br><br>Regards,<br>Office of the Registrar`}];
+const HOLS=[['EID','2026-08-26'],['Janmashtami','2026-09-04'],['Gandhi Jayanti','2026-10-02'],['Vijaya Dashami','2026-10-20'],['Diwali Holidays','2026-11-06','2026-11-11'],['Guru Nanak Jayanti','2026-11-24'],['Christmas','2026-12-25']];
+const EXAMS=[
+ ['Microprocessors and Computer Architecture - CSET203','Mid-Semester Exam-1','Mid-Semester Exam-1'],
+ ['Microprocessors and Computer Architecture - CSET203','IA Theory-1','IA Theory-1'],
+ ['Microprocessors and Computer Architecture - CSET203-R23','Mid-Semester Exam-1','Mid-Semester Exam-1'],
+ ['Microprocessors and computer architecture - CSET203-R21','Mid-Semester Exam-1','Mid-Semester Exam-1'],
+ ['Software development with devops - CSET217-R21','IA Theory-1','IA Theory-1'],
+ ['Software development with devops - CSET217-R21','Mid-Semester Exam-1','Mid-Semester Exam-1'],
+ ['Software Development with DevOps - CSET217','IA Theory-1','IA Theory-1'],
+ ['Software Development with DevOps - CSET217','Mid-Semester Exam-1','Mid-Semester Exam-1'],
+ ['Probability and Statistics - 2025CSET200-R25','Mid-Semester Exam-1','Mid-Semester Exam-1'],
+ ['Data Structures using C++ - 2025CSET201','IA Theory-1','IA Theory-1'],
+ ['Database Management Systems - 2025CSET205','Mid-Semester Exam-1','Mid-Semester Exam-1']];
+const MEALS=[
+ ['Breakfast','08:00 AM - 09:45 AM',['Breakfast(Tue)-','Aloo pyaaz paratha','Curd','Sweet lime','Sprouts','Jam- (276 Kcal),Brown- (282 Kcal) & White Bread- (302 Kcal)','Milk- (59 Kcal)/Tea- (30 Kcal)/Coffee- (30 Kcal)']],
+ ['Lunch','12:00 PM - 02:30 PM',['Lunch(Tue)-Lauki Chana-(214 Kcal)','Aloo Tomatar Rassa- (101 Kcal)','Dal Makhani- (278 Kcal)','Steamed Rice- (129 Kcal)','Roti- (280 Kcal)','Onion Cucumber - ( 60 Kcal)','Masala Chaas (65 Kcal)','Sambhar']],
+ ['Snack','05:00 PM - 06:00 PM',['Snack(Tue)-Paani Poori','Sweet Chutney','Coffee- (30 Kcal)','Rooh Afza']],
+ ['Dinner','08:00 PM - 09:30 PM',['Dinner(Tue)-Kundru Aloo- (146Kcal)','Long Beans Dry-(78 Kcal)','Kala Chaana - (278 Kcal)','Dal Tadka- (190 Kcal)','Jeera Rice- (150 Kcal)','Roti- (280 Kcal)','Gulab Jamun']]];
+const C={dbms:['Database Management Systems','2025CSET205'],mp:['Microprocessors and Computer Architecture','CSET203'],ds:['Data Structures using C++','2025CSET201'],ps:['Probability and Statistics','2025CSET200'],dev:['Software Development with DevOps','CSET217'],er:['Engineering Reports & Research Publishing','2025CSET202']};
+const TT={ // weekday -> classes  [course,room,time,teacher,type]
+ 1:[['ps','P-CB-004','09:25 AM - 10:25 AM (60 min)','Shwetang Dubey','Lecture'],['dev','127-N-CA','10:30 AM - 11:30 AM (60 min)','Utkarsh Agarwal','Lecture'],['er','P-LH-102','01:45 PM - 02:45 PM (60 min)','Neha Sharma','Lecture'],['ds','P-CB-005','02:50 PM - 03:50 PM (60 min)','Tinku Singh','Lecture']],
+ 2:[['dev','127-N-CA','01:45 PM - 02:45 PM (60 min)','Utkarsh Agarwal','Lecture'],['mp','P-LH-101','02:50 PM - 03:50 PM (60 min)','Ashutosh Srivastava','Lecture']],
+ 3:[['ds','P-LA-201','08:20 AM - 09:20 AM (60 min)','Lahar Srivastava','Practical'],['ds','P-LA-201','09:25 AM - 10:25 AM (60 min)','Lahar Srivastava','Practical'],['ps','P-CB-004','12:40 PM - 01:40 PM (60 min)','Shwetang Dubey','Lecture'],['mp','P-LH-101','02:50 PM - 03:50 PM (60 min)','Ashutosh Srivastava','Lecture']],
+ 4:[['dbms','P-LA-202','08:20 AM - 09:20 AM (60 min)','Ankur Maurya','Practical'],['dbms','P-LA-202','09:25 AM - 10:25 AM (60 min)','Ankur Maurya','Practical'],['mp','P-LH-101','10:30 AM - 11:30 AM (60 min)','Ashutosh Srivastava','Lecture'],['dbms','P-CC-018','01:45 PM - 02:45 PM (60 min)','Ankur Maurya','Lecture'],['ds','P-CB-005','02:50 PM - 03:50 PM (60 min)','Tinku Singh','Practical'],['ps','P-CB-004','03:55 PM - 04:55 PM (60 min)','Shwetang Dubey','Lecture']],
+ 5:[['dev','127-N-LAB','08:20 AM - 10:25 AM (120 min)','Utkarsh Agarwal','Practical'],['dbms','P-CC-018','10:30 AM - 11:30 AM (60 min)','Ankur Maurya','Lecture'],['ps','P-CB-004','12:40 PM - 01:40 PM (60 min)','Shwetang Dubey','Tutorial']]};
+let LEAVES=[
+ {type:'Leave Out Pass',from:'05-Nov-2026, 11:00 AM',to:'13-Nov-2026, 06:59 PM',reason:'Home visit',status:'Approved',att:'IMG-20261103-WA0000.jpg'},
+ {type:'On Duty',from:'05-Nov-2026, 09:00 AM',to:'13-Nov-2026, 06:00 PM',reason:'Home visit',status:'Submitted',att:''},
+ {type:'Day Out Pass',from:'31-Oct-2026, 10:00 AM',to:'31-Oct-2026, 08:00 PM',reason:'Shopping',status:'Approved',att:''}];
+const CUR=[
+ ['CSET217 - Software Development with DevOps',4,'Specialization Core - I','Specialization Core- I (Major)','Enrolled','','','2026-2027','Semester - 3'],
+ ['CSET203 - Microprocessors and Computer Architecture',4,'Core','Core-(Major)','Enrolled','','','2026-2027','Semester - 3'],
+ ['2025CSET202 - Engineering Reports & Research Publishing',3,'SEC- 3','SEC- 3-(Major)','Enrolled','','','2026-2027','Semester - 3'],
+ ['2025CSET200 - Probability and Statistics',4,'Core','Core-(Major)','Enrolled','','','2026-2027','Semester - 3'],
+ ['2025CSET201 - Data Structures using C++',4,'Core','Core-(Major)','Enrolled','','','2026-2027','Semester - 3'],
+ ['2025CSET205 - Database Management Systems',5,'Core','Core-(Major)','Enrolled','','','2026-2027','Semester - 3'],
+ ['EMAT101L - Engineering Calculus (Retake)',4,'Core','Core-(Major)','Passed','C','','2026-2027','Sem-1-Supplementary'],
+ ['UVAC1003 - Environment and Sustainability',2,'VAC','VAC-(Major)','Passed','C+','','2025-2026','Semester - 2'],
+ ['UAEC1002 - Soft Skills and Personality Development',2,'Core','Core-(Major)','Passed','A','','2025-2026','Semester - 2'],
+ ['UVAC1002 - Community Project and Social Responsibility',2,'VAC','VAC-(Major)','Passed','C','','2025-2026','Semester - 1'],
+ ['2025CSET152 - Object Oriented Programming using Java',4,'Core','Core-(Major)','Passed','B+','','2025-2026','Semester - 2'],
+ ['2025CSET100-P - Computational Thinking and Programming',0,'-','-','Enrolled','','','2025-2026','Semester - 1'],
+ ['EMAT102L - Linear Algebra and Ordinary Differential Equations',4,'Core','Core-(Major)','Passed','C+','','2025-2026','Semester - 2'],
+ ['2025CSET154 - Digital Design',3,'Core','Core-(Major)','Passed','B','','2025-2026','Semester - 2'],
+ ['EPHY117L-P - Electromagnetism and Mechanics',0,'-','-','Enrolled','','','2025-2026','Semester - 1'],
+ ['EMAT101L - Engineering Calculus',4,'-','-','Failed','F','','2025-2026','Semester - 1'],
+ ['UVAC1002 - Community Project',0,'-','-','Enrolled','','','2025-2026','Semester - 1'],
+ ['2025CSET151 - Introduction to Electrical and Electronics Engineering',3,'Core','Core-(Major)','Passed','B','','2025-2026','Semester - 2'],
+ ['2025CSET156 - Web Technologies',3,'Core','Core-(Major)','Passed','B','','2025-2026','Semester - 2'],
+ ['2025CSET100 - Computational Thinking and Programming',4,'Core','Core-(Major)','Passed','C+','','2025-2026','Semester - 1'],
+ ['UAEC1001 - Communication Skills',2,'AEC-1','AEC-1-(Major)','Passed','C','','2025-2026','Semester - 1'],
+ ['EPHY117L - Electromagnetism and Mechanics',4,'Core','Core-(Major)','Passed','C','','2025-2026','Semester - 1'],
+ ['USEC1002 - Leadership and Management Skills',2,'Core','SEC-(Major)','Passed','B+','','2025-2026','Semester - 1'],
+ ['UVAC1001 - Inculcation of Human Values and Professional Ethics',2,'VAC','VAC-(Major)','Passed','B','','2025-2026','Semester - 1'],
+ ['USEC1001 - Design Thinking',2,'SEC','SEC-(Major)','Passed','B','','2025-2026','Semester - 1'],
+ ['UAEC1003 - Foreign Language',2,'AEC','AEC-(Minor)','Passed','A','','2025-2026','Semester - 2']];
+const RESULTS=[
+ {name:'SEM-1-SUPPLEMENTARY (JUL-2026)',reg:4,comp:4,sgpa:'5.00',cgpa:'6.07',sem:'Sem-1-Supplementary',courses:[['EMAT101L-R25','Engineering Calculus',4,5,'C']]},
+ {name:'SEMESTER - 2 (MAY-2026)',reg:21,comp:21,sgpa:'6.52',cgpa:'5.60',sem:'Semester - 2',courses:[['UVAC1003-R25','Environment and Sustainability',2,6,'C+'],['UAEC1002-R25','Soft Skills and Personality Development',2,9,'A'],['2025CSET154-R25','Digital Design',3,7,'B'],['2025CSET152-R25','Object Oriented Programming using Java',4,8,'B+'],['2025CSET151-R25','Introduction to Electrical and Electronics Engineering',3,7,'B'],['2025CSET156-R25','Web Technologies',3,7,'B'],['EMAT102L-R25','Linear Algebra and Ordinary Differential Equations',4,6,'C+']]},
+ {name:'SEMESTER - 1 (DEC-2025)',reg:22,comp:18,sgpa:'4.73',cgpa:'4.73',sem:'Semester - 1',courses:[['EMAT101L-R25','Engineering Calculus',4,0,'F'],['2025CSET100-R25','Computational Thinking and Programming',4,6,'C+'],['UAEC1001-R25','Communication Skills',2,5,'C'],['EPHY117L-R25','Electromagnetism and Mechanics',4,5,'C'],['USEC1002-R25','Leadership and Management Skills',2,8,'B+'],['UVAC1002-R25','Community Project and Social Responsibility',2,5,'C'],['UVAC1001-R25','Inculcation of Human Values and Professional Ethics',2,7,'B'],['USEC1001-R25','Design Thinking',2,7,'B']]}];
+
+const MENU=[['institution','account_balance','My Institution'],['messages','forum','Messages'],['attendance','event_available','Attendance'],['exams','calendar_month','Exam schedules'],['reports','bar_chart','Reports'],['progress','show_chart','Progress Report'],['holidays','brightness_7','Holidays'],['cafeteria','restaurant','Cafeteria'],['timetable','table_view','Timetable'],['leave','event_busy','Leave and Gate Pass'],['services','headset_mic','Services'],['enrollment','person_add','Enrollment'],['activity','sports_martial_arts','Activity'],['clearance','check_circle','Clearance'],['announcement','campaign','Announcement'],['feedback','chat_bubble','Feedback'],['gallery','photo_library','Gallery'],['finalresult','emoji_events','Final result'],['room','bed','Room partner selection']];
+
+/* ================= HELPERS ================= */
+const $=s=>document.querySelector(s);
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAY=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const pad=n=>String(n).padStart(2,'0');
+const fmt=d=>`${pad(d.getDate())}-${MON[d.getMonth()]}-${d.getFullYear()}`;
+const TODAY=new Date();TODAY.setHours(0,0,0,0);
+function ago(d){const days=Math.round((d-TODAY)/864e5);const a=Math.abs(days);
+ let s=a===0?'today':a<30?`${a} day${a>1?'s':''}`:a<365?`${Math.round(a/30)} month${Math.round(a/30)>1?'s':''}`:`${Math.round(a/365)} year${Math.round(a/365)>1?'s':''}`;
+ return days===0?'Today':days<0?s+' ago':'in '+s;}
+const AVATAR=`<svg viewBox="0 0 100 130" width="100%" height="100%" preserveAspectRatio="xMidYMid slice"><rect width="100" height="130" fill="#ece6df"/><path d="M50 22c-16 0-26 12-26 30 0 10 2 20-4 30 8 2 14-2 18-6l24 0c4 4 10 8 18 6-6-10-4-20-4-30 0-18-10-30-26-30z" fill="#2c2420"/><ellipse cx="50" cy="54" rx="15" ry="18" fill="#d9a888"/><path d="M14 130c2-26 16-38 36-38s34 12 36 38z" fill="#2e2e33"/><path d="M42 92l8 14 8-14z" fill="#fff"/></svg>`;
+function uniLogo(w){return `<svg width="${w}" viewBox="0 0 150 44"><path d="M4 4h30v16c0 12-8 18-15 21C12 38 4 32 4 20z" fill="#1d4e89"/><path d="M8 8h22v12c0 8-5 13-11 16-6-3-11-8-11-16z" fill="#f0b429"/><path d="M19 12l2.5 5 5.5.8-4 3.9 1 5.5-5-2.6-5 2.6 1-5.5-4-3.9 5.5-.8z" fill="#1d4e89"/><text x="40" y="20" font-family="Georgia,serif" font-weight="700" font-size="14" fill="#1d4e89" letter-spacing="1">NORTHWIND</text><text x="40" y="33" font-family="Georgia,serif" font-size="9.5" fill="#1d4e89" letter-spacing="2.4">UNIVERSITY</text></svg>`;}
+function toast(msg,ok){const t=document.createElement('div');t.className='toast'+(ok?' ok':'');t.innerHTML=`<span class="ms">${ok?'check_circle':'error'}</span><div>${msg}</div><span class="ms x">close</span>`;t.querySelector('.x').onclick=()=>t.remove();$('#toasts').appendChild(t);setTimeout(()=>t.remove(),4000);}
+function closeOv(){$('#overlay').innerHTML='';}
+function ov(html,dismiss=true){$('#overlay').innerHTML=`<div class="scrim" ${dismiss?'onclick="closeOv()"':''}></div>`+html;}
+function modal(title,body){ov(`<div class="modal"><div class="mh">${title}<span class="ms" style="cursor:pointer" onclick="closeOv()">close</span></div><div class="mb">${body}</div></div>`);}
+function sheet(title,body,foot=''){ov(`<div class="sheet"><div class="grab"></div><div class="sh">${title}<span class="ms" style="cursor:pointer" onclick="closeOv()">close</span></div><div class="sb">${body}</div>${foot?`<div class="sf">${foot}</div>`:''}</div>`);}
+const emptyBox=t=>`<div class="empty"><span class="ms">info</span>${t}</div>`;
+
+/* ================= LOGIN ================= */
+$('#uniLogoBig').innerHTML=uniLogo(150);
+function togglePw(el){const i=$('#lgPass');i.type=i.type==='password'?'text':'password';el.textContent=i.type==='password'?'visibility':'visibility_off';}
+function doLogin(e){e.preventDefault();if(!$('#lgUser').value.trim()||!$('#lgPass').value){$('#lgErr').classList.remove('hidden');return false;}
+ $('#lgErr').classList.add('hidden');enterApp();return false;}
+function enterApp(){$('#lgPass').value='';$('#login').classList.add('hidden');$('#app').classList.remove('hidden');go('profile');}
+function confirmLogout(){modal('Logout',`<p>Are you sure you want to logout?</p><div class="row" style="justify-content:flex-end;gap:10px;margin-top:16px"><button class="btn-ghost" onclick="closeOv()">Cancel</button><button class="btn-acc" onclick="logout()">Logout</button></div>`);}
+function logout(){closeOv();$('#app').classList.add('hidden');$('#login').classList.remove('hidden');}
+function parentLogin(){modal('Parent Login',`<p style="font-size:13px;color:#555;margin-bottom:12px">Login as a parent/guardian to view your ward's details.</p><div class="formrow"><label>Parent Username</label><input class="inp"></div><div class="formrow"><label>Password</label><input class="inp" type="password"></div><button class="btn-blue" style="margin-top:8px" onclick="closeOv();toast('Switched to parent view (demo)',1)">Login</button>`);}
+function openUniPicker(){const host=$('#app').classList.contains('hidden')?'#phone':'#phone';
+ ov(`<div class="modal"><div class="mh">Select your institution<span class="ms" style="cursor:pointer" onclick="closeOv()">close</span></div><div class="mb"><div class="search" style="margin:0 0 8px"><span class="ms">search</span><input placeholder="Search institution"></div>${['Northwind University','Southfield Institute of Technology','Eastbrook College','Westlake University'].map(u=>`<div class="opt" onclick="closeOv()">${u}</div>`).join('')}</div></div>`);}
+function forgotPw(){modal('Forgot Password',`<p style="font-size:13px;color:#555;margin-bottom:12px">Enter your registered email. We'll send a reset link.</p><div class="formrow"><label>Email</label><input class="inp"></div><button class="btn-blue" onclick="closeOv();toast('If the account exists, a reset link has been sent (demo).',1)">Send reset link</button>`);}
+function createAcc(){modal('Create an account',`<div class="formrow"><label>Full name</label><input class="inp"></div><div class="formrow"><label>Email</label><input class="inp"></div><div class="formrow"><label>Mobile</label><input class="inp"></div><button class="btn-blue" onclick="closeOv();toast('Account request submitted (demo).',1)">Sign up</button>`);}
+function termsModal(){modal('Terms of Use',`<p style="font-size:13px;line-height:1.6">This is a demo replica of a student portal for a fictional institution. No data is sent anywhere; everything runs in your browser.</p>`);}
+
+/* ================= ROUTER ================= */
+let CUR_PAGE='profile';const S={};
+const NOSTRIP=['apps'];
+function go(p,arg){CUR_PAGE=p;closeOv();
+ $('#pstrip').innerHTML=(p==='profile'||NOSTRIP.includes(p))?'':`<div class="pstrip"><div class="av">${AVATAR}</div><div><div class="n">${ST.name}</div><div class="s">${UNI}</div><div class="s">Semester - 3 | 2026-2027</div></div></div>`;
+ $('#nvApps').classList.toggle('on',p==='apps');
+ const fn=PAGES[p]||(()=>emptyBox('Coming soon'));$('#content').innerHTML=fn(arg)||'';$('#content').scrollTop=0;
+ if(AFTER[p])AFTER[p](arg);}
+const AFTER={};
+const pt=(t,sub)=>`<div class="ptitle">${t}</div>${sub?`<div class="psub">${sub}</div>`:''}`;
+
+/* ---------- Drawer ---------- */
+let enrollOpen=false;
+function openDrawer(){ov(`<div class="drawer"><div class="dh"><span class="ms" style="cursor:pointer" onclick="closeOv()">close</span>Northwind University</div><div class="ds"><input placeholder="Search" oninput="filterMenu(this.value)"></div><ul id="menuList"></ul></div>`);filterMenu('');}
+function filterMenu(q){q=q.toLowerCase();let h='';
+ MENU.forEach(([id,ic,lbl])=>{const subs=id==='enrollment'?[['preenlist','bookmarks','Pre enlistment'],['curriculum','bookmark','Curriculum']]:[];
+  const match=lbl.toLowerCase().includes(q)||subs.some(s=>s[2].toLowerCase().includes(q));if(!match)return;
+  const on=CUR_PAGE===id||(id==='enrollment'&&['preenlist','curriculum'].includes(CUR_PAGE));
+  h+=`<li class="${on?'on':''}" onclick="${id==='enrollment'?'toggleEnroll()':`go('${id}')`}"><span class="ms fill">${ic}</span>${lbl}</li>`;
+  if(subs.length&&(enrollOpen||q))subs.forEach(s=>h+=`<li class="sub ${CUR_PAGE===s[0]?'on':''}" onclick="go('${s[0]}')"><span class="ms fill">${s[1]}</span>${s[2]}</li>`);});
+ $('#menuList').innerHTML=h||'<li>No match</li>';}
+function toggleEnroll(){enrollOpen=!enrollOpen;filterMenu('');}
+
+/* ================= PAGES ================= */
+const PAGES={};
+PAGES.apps=()=>`<div class="ptitle">Apps</div><div class="apps">${MENU.map(([id,ic,l])=>`<button onclick="go('${id==='enrollment'?'curriculum':id}')"><span class="ms fill">${ic}</span>${l}</button>`).join('')}</div>`;
+
+/* Profile */
+S.profTab='Profile';
+PAGES.profile=()=>{const L=(k,v)=>`<div class="pl"><span>${k}</span><span>:</span><span>${v}</span></div>`;
+ const tab=S.profTab;let t='';
+ if(tab==='Profile')t=[['Title',''],['First Name',ST.first],['Last Name',ST.last],['DOB',ST.dob],['Age',''],['Gender',ST.gender],["Father's Name",ST.father],["Mother's Name",ST.mother],['Address',ST.address],['City',ST.city],['State',ST.state]].map(a=>L(...a)).join('');
+ else if(tab==='More Info')t=[['Email',ST.email],['Mobile',ST.phone],['Blood Group','-'],['Nationality','Indian'],['Category','General'],['Hostel','Yes']].map(a=>L(...a)).join('');
+ else t=`<div style="padding:10px"><div class="res-head" style="margin:0 0 8px">${ST.name} (Student)<span class="badge b-ok">Active</span></div><button class="btn-acc" onclick="toast('Link account request sent (demo)',1)">+ Link another account</button></div>`;
+ return `<div style="background:var(--bg);padding-bottom:20px"><div class="pstrip"><div class="av">${AVATAR}</div><div><div class="n">${ST.name}</div><div class="s">${UNI}</div><div class="s">Semester - 3 | 2026-2027</div></div></div>
+ <div class="prof-photo">${AVATAR}</div><div class="prof-name">${ST.name}</div>
+ <div class="pl"><span>Student Status</span><span>:</span><span><span class="badge b-ok">Active</span></span></div>
+ ${[['Admission No.',ST.adm],['Admission Year',ST.admYear],['Roll No.',ST.roll],['Degree',ST.degree],['Department',ST.dept],['Semester',ST.sem],['Course Name',ST.course],['College',ST.college],['Curriculum Plan',ST.plan],['Academic Standing',''],['Academic Classification',''],['Discount Category',''],['Intake',''],['Program Validity Date',ST.validity]].map(a=>L(...a)).join('')}
+ <div class="row" style="gap:8px;padding:14px 10px 6px;background:#fff;margin-top:10px"><b style="font-weight:500;font-size:16px;margin-right:6px">Profile</b>${['More Info','Manage Accounts'].map(x=>`<button class="btn-ghost" style="${tab===x?'background:var(--chip)':''}" onclick="S.profTab=S.profTab==='${x}'?'Profile':'${x}';go('profile')">${x}</button>`).join('')}</div>
+ <div style="background:#fff;padding-bottom:10px">${t}</div></div>`;};
+
+/* Institution */
+S.instTab='Circular';
+PAGES.institution=()=>{const tiles=[['Circular','campaign','#e3f2e5','#2e7d32',0],['Notice Board','notifications','#fff3cd','#b8860b',0],['Curriculum & Syllabus','menu_book','#e3f2e5','#2e7d32',0],['Policies & Regulations','policy','#fde3e3','#d32f2f',2]];
+ const tabs=tiles.map(t=>t[0]);
+ const content=S.instTab==='Policies & Regulations'?['Student Code of Conduct 2026-27','Examination & Evaluation Regulations'].map(x=>`<div class="res-head"><span><span class="ms" style="color:var(--accent)">description</span> ${x}</span><button class="btn-ghost" onclick="toast('Download is not available in this demo')">View</button></div>`).join(''):emptyBox(`No ${S.instTab.toLowerCase()}(s) are available.`);
+ return `<div class="ptitle" style="border-bottom:2px solid var(--accent)">My Institution</div>
+ <div class="card"><div class="vm" onclick="modal('Our Vision','To be a globally recognised university that nurtures innovation, research and responsible leadership.')"><span class="ic"><span class="ms">visibility</span></span>OUR VISION</div>
+ <div class="vm" onclick="modal('Our Mission','To deliver transformative education through industry partnerships, experiential learning and a culture of inquiry.')"><span class="ic"><span class="ms">rocket_launch</span></span>OUR MISSION</div></div>
+ <div class="tiles">${tiles.map(([n,ic,bg,c,cnt])=>`<div class="tile" onclick="S.instTab='${n}';go('institution')"><span class="ms" style="background:${bg};color:${c}">${ic}</span><div>${n}<br><b style="font-weight:500">${cnt}</b></div></div>`).join('')}</div>
+ <div class="tabs" style="overflow:auto;white-space:nowrap">${tabs.map(t=>`<button class="${S.instTab===t?'on':''}" onclick="S.instTab='${t}';go('institution')">${t}</button>`).join('')}</div>${content}`;};
+
+/* Messages */
+S.msgQ='';
+PAGES.messages=()=>{const list=MSGS.filter(m=>(m.title+m.from+m.body).toLowerCase().includes(S.msgQ.toLowerCase()));
+ return `${pt('Messages')}<div class="row" style="gap:8px;padding:0 10px"><div class="search" style="flex:1;margin:6px 0"><span class="ms">search</span><input placeholder="Search" value="${S.msgQ}" oninput="S.msgQ=this.value;clearTimeout(window._mt);window._mt=setTimeout(()=>{go('messages');const i=document.querySelector('.search input');i.focus();i.setSelectionRange(99,99)},300)"></div><button class="btn-ghost row" style="border-radius:20px;gap:4px" onclick="sheet('Filter','${['All','Unread','Read','Starred'].map(x=>`<div class=opt onclick=closeOv()>${x}</div>`).join('')}')"><span class="ms" style="font-size:18px">filter_list</span>Filter</button></div>
+ ${list.length?list.map((m,i)=>`<div class="card" style="background:#e8f4fd;padding:12px;display:flex;gap:10px"><span class="ms" style="color:#999;align-self:center">person</span><div style="flex:1"><div class="row" style="justify-content:space-between"><span style="color:var(--blue)">${m.from}</span><span class="badge b-warn">● ${m.date}</span></div><div style="margin:6px 0">${m.title}</div><div style="font-size:13px;color:#333;${S['msgOpen'+i]?'':'max-height:96px;overflow:hidden'}">${m.body}</div><button class="link" style="margin-top:4px" onclick="S['msgOpen${i}']=!S['msgOpen${i}'];go('messages')">${S['msgOpen'+i]?'View Less':'View More'}</button></div></div>`).join(''):emptyBox('No messages found!')}`;};
+
+/* Attendance */
+S.attTab='Subject-wise';S.attShow='Absent';S.attSub=0;
+PAGES.attendance=()=>{let b='';
+ if(S.attTab==='Subject-wise'){b=`<div class="card bars">${SUBJ.map((s,i)=>`<div class="bar-row" style="cursor:pointer" onclick="S.attTab='Log';S.attSub=${i};S.attShow='Both';go('attendance')"><div class="lbl">${s.code}</div><div class="bar-track"><div class="bar" data-w="${s.pct}" style="width:0;background:${s.pct>=75?'#2fb44a':'#e8505b'}"></div></div></div>`).join('')}<div class="axis"><span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span></div><div class="legend"><span><i style="background:#2fb44a"></i>≥ 75%</span><span><i style="background:#e8505b"></i>&lt; 75%</span></div></div>`;}
+ else if(S.attTab==='Log'){const recs=mkLog(S.attSub).filter(r=>S.attShow==='Both'||(S.attShow==='Present'?r[2]==='Present':r[2]!=='Present'));
+  b=`<div style="padding:8px 10px">Show: ${['Absent','Present','Both'].map(x=>`<span class="radio ${S.attShow===x?'on':''}" onclick="S.attShow='${x}';go('attendance')"><i></i>${x}</span>`).join('')}</div>
+  <div class="sel sq" onclick="pickSubject()"><span>${SUBJ[S.attSub].code} - ${SUBJ[S.attSub].name}</span><span class="ms" style="font-size:18px">expand_more</span></div>
+  ${recs.length?recs.map(r=>`<div class="card"><div class="kv"><span class="k">Date</span><span class="v">${r[0]}<br>(${r[1]})</span></div><div class="kv" style="border:none"><span class="k">Status</span><span class="v"><span class="badge ${r[2]==='Present'?'b-ok':'b-bad'}">${r[2]}</span></span></div></div>`).join(''):emptyBox('No records found!')}`;}
+ else{b=`<div class="card" style="padding:14px;text-align:center">${donut(44)}<div style="font-size:13px;line-height:1.7">Current semester attendance: <b>44%</b><br>No. of periods present: 7/16<br>Current month : ${MON[TODAY.getMonth()]}-${TODAY.getFullYear()}</div></div><div class="card" style="padding:14px;text-align:center">${donut(63)}<div style="font-size:13px;line-height:1.7">Overall attendance: <b>63%</b><br>No. of periods present: 98/156</div></div>`;}
+ return `${pt('Attendance','2026-2027')}<div class="sel" onclick="pickSem()">${SEMSEL.replace(/, /g,',')} <span class="ms" style="font-size:16px">arrow_drop_down</span></div>
+ <div class="tabs">${['Subject-wise','Log','Summary'].map(t=>`<button class="${S.attTab===t?'on':''}" onclick="S.attTab='${t}';go('attendance')">${t}</button>`).join('')}</div>${b}`;};
+AFTER.attendance=()=>requestAnimationFrame(()=>document.querySelectorAll('.bar').forEach(b=>b.style.width=b.dataset.w+'%'));
+function donut(p){const r=60,c=2*Math.PI*r;return `<svg class="donut" width="170" height="170" viewBox="0 0 170 170"><circle cx="85" cy="85" r="${r}" fill="none" stroke="#d6d9de" stroke-width="34"/><circle cx="85" cy="85" r="${r}" fill="none" stroke="#1f97e0" stroke-width="34" stroke-dasharray="${c*p/100} ${c}" transform="rotate(-90 85 85)"/><text x="85" y="91" text-anchor="middle" font-size="17" fill="#333" font-family="Mulish">${p}%</text></svg>`;}
+function pickSubject(){let tmp=S.attSub;window._pick=i=>{tmp=i;document.querySelectorAll('.sheet .opt').forEach((o,k)=>{o.classList.toggle('on',k===i);o.querySelector('.ms').style.visibility=k===i?'visible':'hidden'})};
+ window._done=()=>{S.attSub=tmp;closeOv();go('attendance')};
+ sheet('Select attendance',`<div class="search" style="margin:0 0 6px;border-radius:4px;background:#f3f3f3"><span class="ms">search</span><input placeholder="Search" oninput="document.querySelectorAll('.sheet .opt').forEach(o=>o.style.display=o.textContent.toLowerCase().includes(this.value.toLowerCase())?'':'none')"></div>${SUBJ.map((s,i)=>`<div class="opt ${i===tmp?'on':''}" onclick="_pick(${i})">${s.code} - ${s.name}<span class="ms" style="visibility:${i===tmp?'visible':'hidden'}">check</span></div>`).join('')}`,
+ `<button style="background:#eee" onclick="closeOv()">Clear</button><button class="btn-acc" onclick="_done()">Done</button>`);}
+function pickSem(){sheet('Select semester',[SEMSEL,'2025-2026, Semester - 2, B.Tech.(CSE)','2025-2026, Semester - 1, B.Tech.(CSE)'].map((x,i)=>`<div class="opt ${i===0?'on':''}" onclick="closeOv();${i?"toast('No data available for the selected semester')":''}">${x}</div>`).join(''));}
+
+/* Exams */
+S.exTab='Upcoming';S.exQ='';S.exOpen=true;
+PAGES.exams=()=>{let b='';
+ if(S.exTab==='Upcoming')b=emptyBox('No exam schedule found!');
+ else{const list=EXAMS.filter(e=>e.join(' ').toLowerCase().includes(S.exQ.toLowerCase()));
+  b=`<div class="row" style="justify-content:space-between;padding:10px;cursor:pointer" onclick="S.exOpen=!S.exOpen;go('exams')"><span>Internal Consolidation<br><span class="link" onclick="event.stopPropagation();go('finalresult')">Result</span></span><span class="ms">${S.exOpen?'expand_less':'expand_more'}</span></div>
+  ${S.exOpen?list.map(e=>`<div class="card" style="border:1px solid #eee">${[['Main exam subject name - code',e[0]],['Exam subject name',e[1]],['Exam subject code',e[2]],['Date','-'],['Time','-']].map(([k,v])=>`<div class="kv"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}<div class="kv" style="border:none"><span class="k">Syllabus</span><span class="ms" style="cursor:pointer" onclick="toast('Syllabus not uploaded yet')">download</span></div></div>`).join('')||emptyBox('No results'):''}`;}
+ return `<div style="background:#fff;min-height:100%">${pt('Exam Schedule').replace('ptitle"','ptitle" style="background:#fff"')}<div class="sel sq" style="margin:4px 10px" onclick="pickSem()">${SEMSEL}<span class="ms" style="font-size:18px">expand_more</span></div>
+ <div style="text-align:right;padding:6px 10px"><button class="btn-ghost" onclick="go('progress')">View Progress Report</button></div>
+ <div class="row" style="padding:0 10px;gap:16px">${['Upcoming','All'].map(t=>`<button style="padding:6px 0;${S.exTab===t?'border-bottom:2px solid #111':'color:#888'}" onclick="S.exTab='${t}';go('exams')">${t}</button>`).join('')}<div class="search" style="margin:4px 0 4px auto;width:48%"><span class="ms">search</span><input placeholder="Search" value="${S.exQ}" onchange="S.exQ=this.value;S.exTab='All';go('exams')"></div></div>${b}</div>`;};
+
+/* Reports */
+PAGES.reports=()=>`${pt('Reports')}<div class="res-head" style="background:none;margin:0"><span>Hall ticket</span><button class="btn-ghost" onclick="S.rHall=!S.rHall;go('reports')">View details</button></div>${S.rHall?emptyBox('No hall tickets were found!'):''}
+ <div class="res-head" style="background:none;margin:0"><span>Exam application</span><button class="btn-ghost" onclick="S.rApp=!S.rApp;go('reports')">View details</button></div>${S.rApp?emptyBox('No exam applications were found!'):''}`;
+S.rHall=true;
+PAGES.progress=()=>`${pt('Progress report')}${emptyBox('No progress reports found!')}`;
+
+/* Holidays */
+S.holTab='Upcoming';S.holCal=false;S.calM=null;
+PAGES.holidays=()=>{const items=HOLS.map(h=>({n:h[0],d:new Date(h[1]+'T00:00'),e:h[2]?new Date(h[2]+'T00:00'):null}));
+ let b;
+ if(S.holCal){if(!S.calM)S.calM=new Date(TODAY.getFullYear(),TODAY.getMonth(),1);const m=S.calM;const first=new Date(m.getFullYear(),m.getMonth(),1).getDay();const dim=new Date(m.getFullYear(),m.getMonth()+1,0).getDate();
+  const isH=d=>items.find(h=>d>=h.d&&d<=(h.e||h.d));let cells=['S','M','T','W','T','F','S'].map(x=>`<div class="h">${x}</div>`).join('');for(let i=0;i<first;i++)cells+='<div></div>';
+  for(let d=1;d<=dim;d++){const dt=new Date(m.getFullYear(),m.getMonth(),d);const h=isH(dt);cells+=`<div class="${h?'hd':''} ${+dt===+TODAY?'td':''}" ${h?`onclick="toast('${h.n}',1)" style="cursor:pointer"`:''}>${d}</div>`;}
+  const inM=items.filter(h=>h.d.getMonth()===m.getMonth()&&h.d.getFullYear()===m.getFullYear());
+  b=`<div class="card"><div class="row" style="justify-content:space-between;padding:10px"><span class="ms" style="cursor:pointer" onclick="S.calM=new Date(${m.getFullYear()},${m.getMonth()-1},1);go('holidays')">chevron_left</span><b style="font-weight:600">${MON[m.getMonth()]} ${m.getFullYear()}</b><span class="ms" style="cursor:pointer" onclick="S.calM=new Date(${m.getFullYear()},${m.getMonth()+1},1);go('holidays')">chevron_right</span></div><div class="cal">${cells}</div></div>${inM.map(holRow).join('')}`;}
+ else{const list=S.holTab==='Upcoming'?items.filter(h=>(h.e||h.d)>=TODAY):items;b=`<div class="legend"><span><i style="background:#1f97e0"></i>Holidays</span><span><i style="background:#f0a020"></i>Events</span></div>${list.length?`<div style="background:#fff">${list.map(holRow).join('')}</div>`:emptyBox('No Holidays/Events found!')}`;}
+ return `${pt('Holidays / Events')}<div style="text-align:right;padding:0 10px"><button class="btn-ghost" onclick="S.holCal=!S.holCal;go('holidays')">${S.holCal?'List view':'Calendar view'}</button></div>
+ ${S.holCal?'':`<div class="row" style="padding:0 10px;gap:16px">${['Upcoming','All'].map(t=>`<button style="padding:6px 0;${S.holTab===t?'border-bottom:2px solid #111':'color:#888'}" onclick="S.holTab='${t}';go('holidays')">${t}</button>`).join('')}</div>`}${b}`;};
+const holRow=h=>`<div class="hol"><div class="t">${h.n}</div><div class="d">${h.e?`${fmt(h.d)} To ${fmt(h.e)}`:`${DAY[h.d.getDay()]}, ${fmt(h.d)}`}</div><span class="badge b-pink">Holidays</span> <span style="font-size:12px;color:#666;margin-left:6px">${ago(h.d)}</span></div>`;
+
+/* Cafeteria */
+S.qr=false;S.qrSeed=1;
+PAGES.cafeteria=()=>`${pt('Cafeteria',`${fmt(TODAY)}-Today-Ground Floor`)}
+ <div class="qr"><div class="row" style="gap:10px;align-items:flex-start"><span class="ms" style="color:#c99a00">qr_code_2</span><div>Do you want to generate a reusable permanent QR code?</div></div>
+ <div style="margin:10px 0 0 34px"><button class="btn-ghost" style="background:#fff" onclick="showQR()">Show my reusable QR code</button><br><button class="btn-acc" style="margin-top:8px" onclick="S.qrSeed++;toast('New QR code generated',1)">Regenerate my reusable QR code</button></div></div>
+ ${MEALS.map(([n,t,items],i)=>`<div class="meal"><div class="icon"><svg width="190" height="120" viewBox="0 0 190 120" fill="#5f6675"><rect x="40" y="0" width="8" height="40" rx="4"/><rect x="58" y="0" width="8" height="40" rx="4"/><rect x="76" y="0" width="8" height="40" rx="4"/><path d="M40 34h44v10c0 10-8 16-16 16h-12c-8 0-16-6-16-16z"/><rect x="56" y="56" width="12" height="64" rx="6"/><ellipse cx="135" cy="35" rx="24" ry="35"/><rect x="129" y="60" width="12" height="60" rx="6"/></svg></div>
+ <div>${n} ${t}</div>${items.map(x=>`<div>${x}</div>`).join('')}<div class="row" style="justify-content:space-between;margin-top:8px"><span class="badge b-warn">${DAY[TODAY.getDay()]}</span><button class="btn-ghost" onclick="selMeal(this,'${n}')">${S['meal'+n]?'Selected ✓':'Select'}</button></div></div>`).join('')}`;
+function selMeal(b,n){S['meal'+n]=!S['meal'+n];b.textContent=S['meal'+n]?'Selected ✓':'Select';toast(S['meal'+n]?`${n} opted in`:`${n} opted out`,1);}
+function showQR(){let s=S.qrSeed*9301+49297,cells='';const rnd=()=>(s=(s*9301+49297)%233280)/233280;const N=25,z=8;
+ const fin=(x,y)=>`<rect x="${x*z}" y="${y*z}" width="${7*z}" height="${7*z}" fill="#000"/><rect x="${(x+1)*z}" y="${(y+1)*z}" width="${5*z}" height="${5*z}" fill="#fff"/><rect x="${(x+2)*z}" y="${(y+2)*z}" width="${3*z}" height="${3*z}" fill="#000"/>`;
+ for(let y=0;y<N;y++)for(let x=0;x<N;x++){if((x<8&&y<8)||(x>16&&y<8)||(x<8&&y>16))continue;if(rnd()>.5)cells+=`<rect x="${x*z}" y="${y*z}" width="${z}" height="${z}"/>`;}
+ modal('My reusable QR code',`<div style="text-align:center"><svg width="220" height="220" viewBox="-8 -8 216 216"><rect x="-8" y="-8" width="216" height="216" fill="#fff"/>${cells}${fin(0,0)}${fin(18,0)}${fin(0,18)}</svg><p style="font-size:13px;margin-top:8px">${ST.name} · ${ST.roll}</p><p style="font-size:12px;color:#666">Show this at the cafeteria counter</p></div>`);}
+
+/* Timetable */
+S.ttDate=null;
+PAGES.timetable=()=>{if(!S.ttDate)S.ttDate=new Date(TODAY);const d=S.ttDate;const hol=HOLS.find(h=>{const a=new Date(h[1]+'T00:00'),b=h[2]?new Date(h[2]+'T00:00'):a;return d>=a&&d<=b;});
+ const cls=hol?[]:(TT[d.getDay()]||[]);const shift=n=>`S.ttDate=new Date(${d.getFullYear()},${d.getMonth()},${d.getDate()+n});go('timetable')`;
+ return `${pt('Timetable')}<div style="padding:4px 10px">Semester - 3 | 2026-2027</div><div class="sel" onclick="pickSem()">2026-2027, Semester - 3 <span class="ms" style="font-size:16px">arrow_drop_down</span></div>
+ <div class="row" style="gap:8px;padding:0 10px"><button class="btn-ghost row" style="gap:4px" onclick="S.ttDate=null;go('timetable');toast('Timetable refreshed',1)"><span class="ms" style="font-size:16px">refresh</span>Refresh</button><button class="btn-ghost" onclick="weekly()">Weekly Schedule</button></div>
+ <div class="row" style="justify-content:space-between;padding:12px 30px"><span class="ms" style="cursor:pointer" onclick="${shift(-1)}">chevron_left</span><span style="text-decoration:underline">${fmt(d)}</span><span class="ms" style="cursor:pointer" onclick="${shift(1)}">chevron_right</span></div>
+ ${hol?emptyBox(`${+d===+TODAY?'Today':DAY[d.getDay()]} : Holiday-${hol[0]}`):cls.length?cls.map(c=>`<div class="cls"><div class="c">${C[c[0]][0]} ( ${C[c[0]][1]} ) ( ${c[1]} )</div><div>${c[2]} ${c[3]}</div><div>${c[1]}</div><div>${c[4]}</div></div>`).join(''):emptyBox('No classes scheduled for this day')}`;};
+AFTER.timetable=()=>{if(!S.ttShown){S.ttShown=1;toast('Timetable not finalised / No timetable found');}};
+function weekly(){modal('Weekly Schedule',[1,2,3,4,5].map(w=>`<div style="font-weight:600;margin:10px 0 4px;color:var(--accent)">${DAY[w]}</div>${TT[w].map(c=>`<div style="font-size:12.5px;padding:4px 0;border-bottom:1px solid #f2f2f2">${c[2].split(' (')[0]} · ${C[c[0]][0]} · ${c[1]} · ${c[4]}</div>`).join('')}`).join(''));}
+
+/* Leave */
+PAGES.leave=()=>`<div style="text-align:right;padding:10px"><button class="btn-acc" onclick="applyLeave()">Apply Leave and Gate Pass</button></div>
+ ${LEAVES.length?LEAVES.map((l,i)=>`<div class="card">${[['Date',`<b style="font-weight:500">${l.type}</b><br>${l.from.split(',')[0]} to ${l.to.split(',')[0]}`],['More',`<button class="dots" onclick="leaveActions(${i})">···</button>`],['Reason',l.reason],['Status',`<span class="badge ${l.status==='Approved'?'b-ok':l.status==='Rejected'||l.status==='Cancelled'?'b-bad':'b-ok'}" style="${l.status==='Submitted'?'background:#e6f7e8':''}">${l.status}</span>`]].map(([k,v])=>`<div class="kv"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}</div>`).join(''):emptyBox('No leave records were found. To apply click on Apply Leave .')}`;
+function leaveActions(i){window._li=i;const l=LEAVES[i];sheet('Actions',`<div class="opt" onclick="viewLeave(_li)">View</div><div class="opt" onclick="leaveStatus(_li)">Status</div>${l.status==='Submitted'?`<div class="opt" style="color:var(--bad)" onclick="LEAVES[_li].status='Cancelled';closeOv();go('leave');toast('Request cancelled',1)">Cancel request</div>`:''}`);}
+function viewLeave(i){const l=LEAVES[i];modal(l.type,`<span class="badge ${l.status==='Approved'?'b-ok':'b-warn'}">${l.status}</span>${[['From Date',l.from],['To Date',l.to],['Reason',l.reason]].map(([k,v])=>`<div class="pl" style="padding:8px 0"><span>${k.toUpperCase()}</span><span>:</span><span>${v}</span></div>`).join('')}<div style="margin-top:8px">ATTACHMENT</div>${l.att?`<span class="link">${l.att}</span>${l.img?`<img src="${l.img}" style="width:100%;margin-top:8px;border-radius:6px">`:`<div style="height:140px;margin-top:8px;border-radius:6px;background:#eee;display:grid;place-items:center;color:#999"><span class="ms" style="font-size:40px">image</span></div>`}`:'<div style="color:#888;font-size:13px">No attachment</div>'}`);}
+function leaveStatus(i){const l=LEAVES[i];const steps=[['Submitted',true],['Warden review',l.status!=='Submitted'],[l.status==='Cancelled'?'Cancelled':'Approved',l.status==='Approved'||l.status==='Cancelled']];
+ modal('Status',steps.map(([s,d],k)=>`<div class="row" style="gap:10px;padding:8px 0"><span class="ms ${d?'fill':''}" style="color:${d?'var(--ok)':'#aaa'}">${d?'check_circle':'radio_button_unchecked'}</span>${s}</div>`).join(''));}
+function applyLeave(){modal('Apply Leave',`<form onsubmit="return submitLeave(event)"><div class="formrow"><label>Leave type *</label><select class="inp" id="lvType"><option>Leave Out Pass</option><option>Day Out Pass</option><option>On Duty</option><option>Medical Leave</option></select></div>
+ <div class="formrow"><label>From *</label><input class="inp" type="datetime-local" id="lvFrom" required></div><div class="formrow"><label>To *</label><input class="inp" type="datetime-local" id="lvTo" required></div>
+ <div class="formrow"><label>Reason *</label><textarea class="inp" id="lvReason" rows="2" required></textarea></div><div class="formrow"><label>Attachment</label><input type="file" id="lvFile" accept="image/*,.pdf"></div>
+ <button class="btn-acc" style="width:100%;padding:11px" type="submit">Submit</button></form>`);}
+function submitLeave(e){e.preventDefault();const f=s=>{const d=new Date($(s).value);return `${fmt(d)}, ${pad((d.getHours()%12)||12)}:${pad(d.getMinutes())} ${d.getHours()<12?'AM':'PM'}`};
+ if(new Date($('#lvTo').value)<new Date($('#lvFrom').value)){toast('To date must be after From date');return false;}
+ const file=$('#lvFile').files[0];const rec={type:$('#lvType').value,from:f('#lvFrom'),to:f('#lvTo'),reason:$('#lvReason').value,status:'Submitted',att:file?file.name:''};
+ if(file&&file.type.startsWith('image/')){rec.img=URL.createObjectURL(file);}
+ LEAVES.unshift(rec);closeOv();go('leave');toast('Leave request submitted successfully',1);return false;}
+
+/* Services */
+S.svcQ='';
+const SERVICES=[['CONSENT OF STUDENT AND PARENT','UNDERTAKING'],['BONAFIDE CERTIFICATE','CERTIFICATE'],['ID CARD REISSUE','ADMIN'],['TRANSCRIPT REQUEST','EXAMINATION']];
+PAGES.services=()=>`<div style="background:#fff;min-height:100%"><div class="row" style="gap:10px;padding:12px 10px;font-size:16px"><span class="ms">arrow_back</span>New service request</div>
+ <div style="padding:6px 10px;font-size:15px">CATEGORY</div><div style="background:var(--bg2);padding:8px 14px;margin:0 10px;font-size:13px">UNDERTAKING</div><div style="padding:10px 14px;font-size:13px;margin:0 10px;border:1px solid #f0f0f0">Odd Semester Supplementary Examinations (AY 2026–27)</div>
+ <div style="padding:14px 10px 4px;font-size:15px">Service Name</div><div class="search"><span class="ms">search</span><input placeholder="Search service" value="${S.svcQ}" onchange="S.svcQ=this.value;go('services')"></div>
+ ${SERVICES.filter(s=>s.join(' ').toLowerCase().includes(S.svcQ.toLowerCase())).map((s,i)=>`<div class="res-head" style="border:1px solid #eee;cursor:pointer" onclick="svcForm('${s[0]}')"><span>${s[0]}<br><span style="font-size:12px;color:#555">${s[1]}</span></span><span class="ms">chevron_right</span></div>`).join('')}</div>`;
+function svcForm(n){modal(n,`<p style="font-size:13px;color:#555;margin-bottom:10px">Odd Semester Supplementary Examinations (AY 2026–27)</p><div class="formrow"><label>Parent's name *</label><input class="inp" id="svP"></div><div class="formrow"><label>Remarks</label><textarea class="inp" rows="3"></textarea></div><label style="font-size:13px;display:flex;gap:8px;margin-bottom:12px"><input type="checkbox" id="svC"> I and my parent agree to the terms of this undertaking.</label><button class="btn-acc" style="width:100%;padding:11px" onclick="if(!$('#svC').checked||!$('#svP').value){toast('Please fill required fields and accept');return}closeOv();toast('Service request submitted',1)">Submit request</button>`);}
+
+/* Enrollment */
+PAGES.preenlist=()=>`${pt('Pre - enlistment')}<div style="background:#fff;margin:6px 10px;border-radius:6px">${['Semester - 5','Semester - 7','Semester - 9','Semester - 3'].map(s=>`<div style="padding:10px;border-bottom:1px solid #f2f2f2;cursor:pointer" onclick="toast('Pre-enlistment window has expired')">${s}<div style="font-size:12.5px;color:#444">2026-2027<br>Ends on: 13-Aug-2026, 11:59 PM (Expired)<br>0 Courses | 0 Credits selected</div></div>`).join('')}</div>`;
+S.curQ='';S.curPg=1;S.curPer=10;
+PAGES.curriculum=()=>{const list=CUR.filter(c=>c.join(' ').toLowerCase().includes(S.curQ.toLowerCase()));const pages=Math.max(1,Math.ceil(list.length/S.curPer));S.curPg=Math.min(S.curPg,pages);
+ const sl=list.slice((S.curPg-1)*S.curPer,S.curPg*S.curPer);const bc=s=>s==='Passed'?'b-ok':s==='Failed'?'b-bad':'b-bad" style="background:var(--chip);color:var(--accent)';
+ return `${pt('Curriculum')}<div class="sum3"><div><b>24</b>Credits enrolled in current semester</div><div><b>43 / 67</b>Earned credits + 0 Free elective(s)</div><div><b>64.18%</b>Progress towards graduation</div></div>
+ <div style="padding:4px 10px">Course Plan: ${ST.plan}</div><div class="search"><span class="ms">search</span><input placeholder="Search Course" value="${S.curQ}" onchange="S.curQ=this.value;S.curPg=1;go('curriculum')"></div>
+ ${sl.map(c=>`<div class="card">${[['Course',c[0]],['Credits',c[1]||'-'],['Category',c[2]],['Sub Category',c[3]],['Status',`<span class="badge ${bc(c[4])}">${c[4]}</span>`],['Grade',c[5]||'-'],['Minimum Grade','-'],['Academic_Year',c[7]],['Semester',c[8]]].map(([k,v])=>`<div class="kv"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}</div>`).join('')||emptyBox('No courses found')}
+ ${pager('cur',S.curPg,pages,list.length,sl.length,S.curPer)}`;};
+function pager(k,p,pages,total,shown,per){const set=n=>`S.${k}Pg=${n};go('${k==='cur'?'curriculum':'finalresult'}')`;
+ return `<div style="text-align:center;font-size:12.5px;color:#444">Page (${p} /${pages})  Showing ${shown} of ${total}</div><div class="pager"><button ${p<=1?'disabled':''} onclick="${set(1)}">|&lt;</button><button ${p<=1?'disabled':''} onclick="${set(p-1)}">Prev</button><button class="pri" ${p>=pages?'disabled':''} onclick="${set(p+1)}">Next</button><button ${p>=pages?'disabled':''} onclick="${set(pages)}">&gt;|</button></div>
+ <div class="pager">Page : <input class="inp" style="width:56px;padding:4px" type="number" min="1" max="${pages}" value="${p}" onchange="${set('Math.max(1,Math.min('+pages+',+this.value||1))')}"> of ${pages} <select class="inp" style="width:86px;padding:4px" onchange="S.${k}Per=+this.value;${set(1)}">${[5,10,20].map(n=>`<option value="${n}" ${n===per?'selected':''}>Show ${n}</option>`).join('')}</select></div>`;}
+
+/* simple pages */
+PAGES.activity=()=>`${pt('Activity')}${emptyBox('No activities were found!')}`;
+PAGES.clearance=()=>`${pt('Clearance')}${emptyBox('No clearance records found!')}`;
+PAGES.announcement=()=>`${pt('Announcement')}${emptyBox('No announcements found!')}`;
+PAGES.gallery=()=>`${pt('Gallery')}${emptyBox('No albums found!')}`;
+PAGES.feedback=()=>`${pt('Feedback')}<div class="card" style="padding:12px"><div class="formrow"><label>Category</label><select class="inp" id="fbC"><option>Academics</option><option>Hostel</option><option>Cafeteria</option><option>Transport</option><option>Other</option></select></div><div class="formrow"><label>Your feedback *</label><textarea class="inp" id="fbT" rows="4"></textarea></div><button class="btn-acc" onclick="if(!$('#fbT').value.trim()){toast('Please enter feedback');return}$('#fbT').value='';toast('Thank you! Feedback submitted.',1)">Submit</button></div>`;
+PAGES.room=()=>`${pt('Room partner selection','Start sending and receiving room requests after selecting your preferred room type')}<div class="res-head" style="background:none;margin:0"><span>TRIPLE SHARING</span><button class="btn-acc" onclick="roomSel()">${S.roomSel?'SELECTED':'SELECT'}</button></div>
+ ${S.roomSel?`<div style="padding:4px 10px;font-size:13px">Send a room request</div><div class="search"><span class="ms">search</span><input id="rmQ" placeholder="Enter roll no. of your roommate"></div><div style="padding:0 10px"><button class="btn-ghost" onclick="if(!$('#rmQ').value.trim())return toast('Enter a roll number');toast('Room request sent to '+$('#rmQ').value,1)">Send request</button></div><div class="ptitle" style="font-size:15px">Received requests</div>${emptyBox('No room requests received yet')}`:''}`;
+function roomSel(){if(S.roomSel)return;modal('Confirm',`<p>Select <b>TRIPLE SHARING</b> as your preferred room type?</p><div class="row" style="justify-content:flex-end;gap:10px;margin-top:16px"><button class="btn-ghost" onclick="closeOv()">Cancel</button><button class="btn-acc" onclick="S.roomSel=1;closeOv();go('room')">Confirm</button></div>`);}
+
+/* Final result */
+S.frTab='Last Semester';S.frOpen=null;S.frPg=1;S.frPer=10;
+PAGES.finalresult=()=>{const list=S.frTab==='Last Semester'?[RESULTS[0]]:RESULTS;
+ const body=(S.frTab==='Last Semester'?[0]:RESULTS.map((_,i)=>i)).map(i=>{const r=RESULTS[i];const open=S.frTab==='Last Semester'||S.frOpen===i;
+  let h=`<div class="res-head" style="${open?'':''}"><span>${r.name}${open?` / CREDIT REGISTERED : ${r.reg} / CREDIT COMPLETED : ${r.comp} / SGPA : ${r.sgpa} / CGPA : ${r.cgpa}`:''}</span><button class="btn-ghost row" style="white-space:nowrap" onclick="resAction(${i})">Action <span class="ms" style="font-size:16px">expand_more</span></button></div>`;
+  if(open){const pages=Math.ceil(r.courses.length/S.frPer);const p=Math.min(S.frPg,pages);const sl=r.courses.slice((p-1)*S.frPer,p*S.frPer);
+   h+=sl.map(c=>`<div class="card">${[['Semester',r.sem],['Course Code',c[0]],['Course Name',c[1]],['Credit',c[2]],['Grade Point',c[3]],['Grades',c[4]],['Result Status',`<span class="badge ${c[4]==='F'?'b-bad':'b-ok'}">${c[4]==='F'?'Fail':'Pass'}</span>`]].map(([k,v])=>`<div class="kv"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}</div>`).join('')+pager('fr',p,pages,r.courses.length,sl.length,S.frPer);}
+  return h;}).join('');
+ return `${pt('Final result')}<div class="tabs">${['Last Semester','Previous Semesters'].map(t=>`<button class="${S.frTab===t?'on':''}" onclick="S.frTab='${t}';S.frOpen=null;S.frPg=1;go('finalresult')">${t}</button>`).join('')}</div>${body}`;};
+function resAction(i){window._ri=i;sheet('Action',`<div class="opt" onclick="S.frTab==='Last Semester'||(S.frOpen=S.frOpen===_ri?null:_ri);S.frPg=1;closeOv();go('finalresult')">View</div><div class="opt" onclick="closeOv();toast('Downloads are disabled in this demo')">Download</div>`);}
+
+/* ================= ACCESSIBILITY ================= */
+const A={size:100,lh:1.35,ls:0,toggles:{}};
+const ATOG={content:[['a-readable','text_fields','Readable Font'],['a-dys','menu_book','Dyslexia Friendly Font'],['a-shadow','blur_on','Text Shadow'],['a-hideimg','hide_image','Hide Images']],
+ color:[['c-high','contrast','High Contrast'],['c-dark','dark_mode','Dark Mode'],['c-light','light_mode','Light Contrast'],['c-mono','filter_b_and_w','Monochrome'],['c-lowsat','opacity','Low Saturation'],['c-invert','invert_colors','Invert Colors'],['c-blue','nights_stay','Blue Light Filter']],
+ tools:[['a-bigcursor','arrow_selector_tool','Big Cursor'],['t-guide','horizontal_rule','Reading Guide'],['t-mask','crop_free','Reading Mask'],['a-links','link','Highlight Links'],['a-heads','title','Highlight Headings'],['a-focus','center_focus_strong','Enhanced Focus'],['a-bigbtn','touch_app','Larger Buttons'],['a-noanim','motion_photos_paused','Pause Animations']]};
+function applyA(){const r=document.documentElement.style;r.setProperty('--fs',(A.size/100)*FS);r.setProperty('--lh',A.lh);r.setProperty('--ls',A.ls+'px');
+ const t=A.toggles;Object.values(ATOG).flat().forEach(([k])=>{if(k.startsWith('a-'))document.body.classList.toggle(k,!!t[k]);});
+ const f=[];if(t['c-high'])f.push('contrast(1.5)');if(t['c-light'])f.push('contrast(.8) brightness(1.1)');if(t['c-mono'])f.push('grayscale(1)');if(t['c-lowsat'])f.push('saturate(.5)');if(t['c-invert'])f.push('invert(1) hue-rotate(180deg)');if(t['c-blue'])f.push('sepia(.4) saturate(1.2)');if(t['c-dark'])f.push('invert(.9) hue-rotate(180deg)');
+ $('#phone').style.filter=f.join(' ');$('#guide').style.display=t['t-guide']?'block':'none';$('#mask').style.display=t['t-mask']?'block':'none';}
+document.addEventListener('mousemove',e=>{$('#guide').style.top=(e.clientY-5)+'px';$('#mask').style.top=(e.clientY-40)+'px';});
+document.addEventListener('touchmove',e=>{const y=e.touches[0].clientY;$('#guide').style.top=(y-5)+'px';$('#mask').style.top=(y-40)+'px';},{passive:true});
+function openAccess(){$('#nvAcc').classList.add('on');const btn=([k,ic,l])=>`<button class="ab ${A.toggles[k]?'on':''}" onclick="A.toggles['${k}']=!A.toggles['${k}'];applyA();this.classList.toggle('on')"><span class="ms">${ic}</span>${l}</button>`;
+ const sl=(ic,l,id,min,max,step,val,unit)=>`<div class="slider"><div class="top"><span class="ms" style="font-size:18px">${ic}</span><span>${l}</span><span id="${id}V">${val}${unit}</span></div><input type="range" min="${min}" max="${max}" step="${step}" value="${val}" oninput="setSl('${id}',this.value,'${unit}')"></div>`;
+ ov(`<div class="panel"><div class="ph"><span class="ms" style="cursor:pointer" onclick="closeAccess()">close</span>Accessibility<button class="btn-ghost row" style="margin-left:auto;gap:4px;font-size:14px" onclick="resetA()"><span class="ms" style="font-size:18px">restart_alt</span>Reset All</button></div><div class="pb">
+ <div class="sec">Content</div>${sl('format_size','TEXT_SIZE','size',80,160,10,A.size,'%')}${sl('format_line_spacing','Line Spacing','lh',1,2.5,.1,A.lh,'')}${sl('space_bar','Letter Spacing','ls',0,5,.5,A.ls,'px')}
+ <div class="agrid">${ATOG.content.map(btn).join('')}</div><div class="sec">Color</div><div class="agrid">${ATOG.color.map(btn).join('')}</div><div class="sec">Tools</div><div class="agrid">${ATOG.tools.map(btn).join('')}</div></div></div>`.replace('<div class="scrim" onclick="closeOv()">','<div class="scrim" onclick="closeAccess()">'));
+ document.querySelector('.scrim').onclick=closeAccess;}
+function closeAccess(){$('#nvAcc').classList.remove('on');closeOv();}
+function setSl(id,v,u){A[id]=+v;$('#'+id+'V').textContent=v+u;applyA();}
+function resetA(){A.size=100;A.lh=1.35;A.ls=0;A.toggles={};applyA();openAccess();}
+
+/* ================= SETTINGS ================= */
+const THEMES={Indigo:['#3949ab','#2c3a8c','#e8eaf6','#d7dbf2','#c5cae9'],Lagoon:['#0288d1','#01579b','#e1f5fe','#cbe9fa','#b3e5fc'],Midnight:['#1a2340','#0f162b','#e6e8ee','#d5d9e3','#c8cedc'],Blush:['#8d1b3d','#6e1430','#fde6ea','#fbd9df','#f8cfd7'],Forest:['#1b5e20','#124116','#e8f5e9','#d4ecd6','#c8e6c9'],Sage:['#2e8b57','#22694a','#eef7f1','#dcefe3','#cfe8d8']};
+const THEME_SW={Indigo:'#2f45b5',Lagoon:'#26b3ef',Midnight:'#1a2340',Blush:'#5e0f2a',Forest:'#174d2a',Sage:'#1e9e5e'};
+let SET={theme:'Blush',font:'Mulish',fsz:'Normal',rtl:false,lang:'English (India)'};let FS=1;
+function applySet(){const t=THEMES[SET.theme],r=document.documentElement.style;['--accent','--accent-d','--bg','--bg2','--chip'].forEach((v,i)=>r.setProperty(v,t[i]));
+ r.setProperty('--font',{Mulish:"'Mulish',sans-serif",lato:"'Lato',sans-serif",'29lt-bukra':"'Tajawal',sans-serif"}[SET.font]);FS={Normal:1,Large:1.12,'Extra Large':1.25}[SET.fsz];document.body.classList.toggle('rtl',SET.rtl);applyA();}
+function openSettings(){$('#nvSet').classList.add('on');const rd=(k,v)=>`<span class="radio ${SET[k]===v?'on':''}" onclick="SET.${k}='${v}';applySet();openSettings()"><i></i>${v}${v==='Mulish'?' (default)':''}</span>`;
+ ov(`<div class="side"><div class="ph"><span class="ms" style="cursor:pointer" onclick="closeSet()">close</span>Settings</div><div class="pb">
+ <div class="sbox"><h4>Language</h4><select class="inp" style="margin-top:8px" onchange="SET.lang=this.value;toast('Language set to '+this.value,1)">${['English (India)','English (US)','हिन्दी','العربية'].map(l=>`<option ${SET.lang===l?'selected':''}>${l}</option>`).join('')}</select></div>
+ <div class="sbox"><h4>Typeface</h4><p>Your interface font</p>${rd('font','Mulish')}${rd('font','lato')}<div style="margin-top:8px">${rd('font','29lt-bukra')}</div></div>
+ <div class="sbox"><h4>Font size</h4><p>Customize the font size by your preference</p>${rd('fsz','Normal')}${rd('fsz','Large')}<div style="margin-top:8px">${rd('fsz','Extra Large')}</div></div>
+ <div class="sbox"><h4>Custom website themes</h4><p>Customize the themes by your preference</p><div class="themes">${Object.keys(THEMES).map(n=>`<div class="theme ${SET.theme===n?'on':''}" onclick="SET.theme='${n}';applySet();openSettings()"><div class="sw" style="background:${THEME_SW[n]}"><i style="width:80%"></i><i style="width:60%"></i><i style="width:40%"></i></div>${n}</div>`).join('')}</div></div>
+ <div class="sbox"><h4>Website RTL (right to left) changes</h4><p>Mirror the interface for RTL scripts</p><span class="switch ${SET.rtl?'on':''}" onclick="SET.rtl=!SET.rtl;applySet();openSettings()"></span> &nbsp;RTL</div>
+ </div></div>`);document.querySelector('.scrim').onclick=closeSet;}
+function closeSet(){$('#nvSet').classList.remove('on');closeOv();}
+applySet();
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+</script>
+</body>
+</html>
